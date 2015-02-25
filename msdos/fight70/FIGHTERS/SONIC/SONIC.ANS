@@ -1,0 +1,36 @@
+#sprite sonic_spin
+    image "SONIC_02.PCX" (-20,0)
+	colors 64
+#end
+
+#sprite super_sonic
+    image "SONIC_05.PCX" (-20,0)
+	colors 64 65
+#end
+
+#anim Dummy
+#end
+
+#anim spin_attack 100
+	stars xh 0 100 129 (0,0,0) 140 (255,255,255) 255 -5
+//	place sonic_spin (0,-10) 0
+    show sonic_spin
+    path sonic_spin 100 0 (0,40,-200) (250,40,200)
+	write "Spin attack!!" 63 0 100 50
+#end
+
+#anim spin_jump 100
+	stars xh 0 100 129 (0,0,0) 140 (255,255,255) 255 -5
+//	place sonic_spin (0,-10) 0
+    show sonic_spin
+    path sonic_spin 100 0 (-10,60,-200) (100,-10,-100) (160,-10,100) (220,90,200)
+	write "Spin jump!!" 63 0 100 50
+#end
+
+#anim super_tackle 100
+    stars zn 0 100 129 (0,0,0) 140 (255,255,255) 255 5
+    show super_sonic
+    path super_sonic 100 0 (250,20,-200) (60,20,200)
+//    write "Spin attack!!" 63 0 100 50
+#end
+

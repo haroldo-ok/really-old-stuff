@@ -1,0 +1,517 @@
+#include "hardware.zxi"
+#include "sprite.zxi"
+#include "test.zxi"
+
+dim joy as UByte
+dim frameTimer as UInteger
+
+const VisibleMinX	as UByte = 16
+const VisibleMaxX	as UByte = 256 - 16
+const VisibleMinY	as UByte = 0
+const VisibleMaxY	as UByte = 192
+
+const VisibleTilesMaxY	as UByte = (VisibleMaxY - VisibleMinY) / 16
+
+
+const BackgroundCharMaxY	as UByte = 28
+const BackgroundPixelMaxY	as UByte = BackgroundCharMaxY * 8
+
+
+const PlayerWidth	as UByte = 16
+const PlayerHeight	as UByte = 16
+const PlayerMinX	as UByte = VisibleMinX + (PlayerWidth / 2)
+const PlayerMaxX	as UByte = VisibleMaxX - (PlayerWidth / 2)
+const PlayerMinY	as UByte = VisibleMinY + 16
+const PlayerMaxY	as UByte = VisibleMaxY - PlayerHeight - 16
+
+const PlayerBaseTile	as UByte = 32
+const PlayerTileCount	as UByte = 12
+const PlayerFrameLeft	as UByte = 0
+const PlayerFrameCenter as UByte = 4
+const PlayerFrameRight	as UByte = 8
+
+dim playerX, playerY, playerFrame as UByte
+dim playerFireDelay as UByte
+
+
+
+const MaxShots		as UByte = 32
+const ShotShift 	as UByte = 3	' 8 bytes
+const ShotMemSize	as UByte = 1 << ShotShift
+const ShotArraySize	as UInteger = MaxShots * ShotMemSize
+const ShotXOfs		as UByte = 0	' X position, 1 byte
+const ShotYOfs		as UByte = 1	' Y position, 1 byte
+const ShotCmdOfs	as UByte = 2	' Command pointer, 2 bytes
+const ShotTileOfs	as UByte = 4	' Upper 7 bits are the sprite's tile, lower bit tells if it's 8x16 or 16x16
+const ShotLifeOfs	as UByte = 5	' Lower 5 bits are the shot's life
+
+const ShotBaseTile	as UByte = 48
+const ShotTileCount	as UByte = 16
+
+dim shots(0 to ShotArraySize - 1) as UByte
+
+
+
+const MapBaseTile			as UInteger = 256 + 16
+const MapTilesPerRow	 	as UByte = 14
+const MapBytesPerCharRow	as UByte = MapTilesPerRow << 2
+const MapBytesPerTileRow	as UByte = MapTilesPerRow << 4
+
+dim mapRowTileBuffer(0 to MapTilesPerRow * 2 * 2) as UInteger
+dim mapBkgScroll as UByte
+dim mapSubScroll as UByte
+dim mapBkgMapY as UByte
+dim mapBkgMapPtr as UInteger
+
+
+
+const ScoreBaseTile		as UInteger = 0
+const ScoreTileCount	as UByte = 20
+
+
+
+asm
+    ld a,%11100110
+;          |||| |`- Zoomed sprites -> 16x16 pixels
+;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
+;          |||`---- 30 row/240 line mode
+;          ||`----- 28 row/224 line mode
+;          |`------ VBlank interrupts
+;          `------- Enable display
+    out ($bf),a
+    ld a,$81
+    out ($bf),a
+end asm
+
+
+sub DrawPlayerShip()
+	AddDoubleSprite(playerX, playerY, playerFrame + PlayerBaseTile)
+end sub
+
+sub DrawBkgSideStrips()
+	dim i as UByte
+	dim buffer(0 to 1) as UInteger
+	
+	' 2nd tileset, appears in front of the sprites.
+	poke UInteger @buffer, $1100
+	poke UInteger @buffer + 2, $1100
+
+	for i = 0 to 27
+		SetBkgData(@buffer, 0, i, 2, 1)
+		SetBkgData(@buffer, 30, i, 2, 1)
+	next
+end sub
+
+sub ResetShots()
+	dim p, endP as UInteger
+	
+	endP = @shots
+	endP = endP + ShotArraySize
+	
+	for p = @shots to endP
+		poke p, 0
+	next
+end sub
+
+function NextPathCmd(baseAddr as UInteger) as UByte
+	dim cmdAddr as UInteger
+	
+	cmdAddr = peek(UInteger, baseAddr + ShotCmdOfs)
+	poke UInteger baseAddr + ShotCmdOfs, cmdAddr + 1
+	return peek(cmdAddr)
+end function
+
+sub IncPathCmdAddr(baseAddr as UInteger, delta as Integer)
+	poke UInteger baseAddr + ShotCmdOfs, \
+			peek(UInteger, baseAddr + ShotCmdOfs) + delta
+end sub
+
+
+sub MoveShot(baseAddr as UInteger)
+	dim x, y as UByte
+	dim cmd, cmdhi, cmdlo as UByte
+		
+	x = peek(baseAddr + ShotXOfs)
+	y = peek(baseAddr + ShotYOfs)
+
+	cmd = NextPathCmd(baseAddr)
+	cmdhi = cmd >> 4
+	cmdlo = cmd band %1111
+	
+	if cmdhi = 8 then
+		' Special commands
+		if cmdlo = 0 then
+			' Decrement pointer
+			IncPathCmdAddr(baseAddr, -cast(Integer, NextPathCmd(baseAddr)))
+		end if
+	else
+		' Next position on path	
+		if cmdhi band %1000 then
+			x = x - (cmdhi band %111)
+		else
+			x = x + cmdhi
+		end if
+		
+		if cmdlo band %1000 then
+			y = y - (cmdlo band %111)
+		else
+			y = y + cmdlo
+		end if
+	
+		poke baseAddr + ShotXOfs, x
+		poke baseAddr + ShotYOfs, y
+	end if
+	
+	if y > 207 then
+		poke baseAddr + ShotLifeOfs, 0	' Kill it!
+	end if	
+end sub
+
+sub AnimShot(baseAddr as UInteger)
+	dim tile as UByte
+
+	tile = peek(baseAddr + ShotTileOfs)
+	if tile band 1 then ' 16x16 ?
+		' Animate bits 2 and 3
+		tile = (tile band %11110011) bor ((tile + 4) band %00001100)
+	else ' 8x16 ?
+		' Animate bits 1 and 2
+		tile = (tile band %11111001) bor ((tile + 2) band %00000110)
+	end if
+
+	poke(baseAddr + ShotTileOfs, tile)
+end sub
+
+sub DrawShot(baseAddr as UInteger)	
+	dim x, y, tile as UByte
+
+	x = peek(baseAddr + ShotXOfs)
+	y = peek(baseAddr + ShotYOfs)
+	tile = peek(baseAddr + ShotTileOfs)
+
+	AddSprite(x, y, tile band $FE)
+	if tile band 1 then
+		AddSprite(x + 8, y, (tile band $FE) + 2)
+	end if
+end sub
+
+sub HandleShots()
+	dim p as UInteger
+	dim i, anim as UByte
+	
+	p = @shots
+	anim = ((frameTimer band $3) = 0)
+	for i = 0 to MaxShots - 1
+		if peek(p + ShotLifeOfs) then ' Is it alive ?
+			MoveShot(p)
+			if anim then
+				AnimShot(p)
+			end if		
+		end if
+		p = p + ShotMemSize ' Calculates address of next one
+	next
+end sub
+
+sub DrawShots()
+	dim p as UInteger
+	dim i as UByte
+	
+	p = @shots
+	for i = 0 to MaxShots - 1
+		if peek(p + ShotLifeOfs) then ' Is it alive ?
+			DrawShot(p)
+		end if
+		p = p + ShotMemSize ' Calculates address of next one
+	next
+end sub
+
+sub AddShot(x as UByte, y as UByte, shotType as UByte)
+	dim p as UInteger
+	dim i as UByte
+	
+	p = @shots
+	for i = 0 to MaxShots - 1
+		if not peek(p + ShotLifeOfs) then ' Is it dead ?
+			' Add the shot
+			poke p + ShotXOfs, x
+			poke p + ShotYOfs, y
+			poke UInteger p + ShotCmdOfs, LoadPath(shotType)
+			poke p + ShotTileOfs, ShotBaseTile + 8
+			poke p + ShotLifeOfs, 1
+
+			return
+		end if
+		p = p + ShotMemSize ' Calculates address of next one
+	next
+	
+	' Fail!
+end sub
+
+function fastcall LoadPath(shotNumber as UInteger) as UInteger
+	asm			
+		add hl, hl
+		ld de, PathTable
+		add hl, de			; HL now points to the corresponding cell on the shot table
+		
+		ld a, (hl)
+		inc hl
+		ld h, (hl)
+		ld l, a				; HL now points to the start of the path
+	end asm
+end function
+
+function fastcall LoadMap(mapNumber as UInteger) as UInteger
+	asm
+		ld hl, TestMap
+	end asm
+end function
+
+function DrawMapRow(y as UByte, baseAddr as UInteger) as UInteger
+	dim i as UByte
+	dim tile as UInteger
+	dim destp as UInteger
+		
+	destp = @mapRowTileBuffer
+	
+	for i = 0 to MapTilesPerRow - 1
+		tile = MapBaseTile + (peek(baseAddr) << 2)
+		
+		poke UInteger destp, tile
+		poke UInteger destp + 2, tile + 1				
+		poke UInteger destp + MapBytesPerCharRow, tile + 2
+		poke UInteger destp + MapBytesPerCharRow + 2, tile + 3
+	
+		baseAddr = baseAddr + 1
+		destp = destp + 4
+	next
+	
+	SetBkgData(@mapRowTileBuffer, 2, y, MapTilesPerRow << 1, 2)
+end function
+
+sub fastcall PrepareNextMapLine()
+	DrawMapRow(mapBkgMapY, mapBkgMapPtr)
+
+	mapBkgMapPtr = mapBkgMapPtr + MapTilesPerRow
+	
+	if mapBkgMapY = 0 then
+		mapBkgMapY = BackgroundCharMaxY - 2
+	else
+		mapBkgMapY = mapBkgMapY - 2
+	end if
+	
+	mapSubScroll = 15
+end sub
+
+sub fastcall InitMapVars()
+	mapBkgScroll = BackgroundPixelMaxY - VisibleMaxY
+	mapSubScroll = 0
+	mapBkgMapY = 0
+	mapBkgMapPtr = LoadMap(0)
+end sub
+
+sub InitMap()
+	dim i as UByte
+
+	InitMapVars()
+	
+	for i = 0 to VisibleTilesMaxY
+		PrepareNextMapLine()
+	next
+	
+	mapBkgScroll = BackgroundPixelMaxY - VisibleMaxY - VisibleMaxY + BackgroundPixelMaxY - 16
+	ScrollY(mapBkgScroll)
+end sub
+
+LoadPalette(ResourceAddr(ForestPal), 16, 0)
+LoadPalette(ResourceAddr(MManiaPal), 16, 16)
+
+LoadTiles(ScoreBaseTile, ResourceAddr(ScoreTil), ScoreTileCount, 4)
+LoadTiles(PlayerBaseTile, ResourceAddr(MManiaTil), PlayerTileCount, 4)
+LoadTiles(ShotBaseTile, ResourceAddr(PlayerShotTil), ShotTileCount, 4)
+LoadTiles(256, ResourceAddr(DefaultBkgTil), 64, 4)
+LoadTiles(MapBaseTile, ResourceAddr(ForestTil), 64, 4)
+
+DrawBkgSideStrips()
+
+' DrawMapRow(0, LoadMap(0))
+' DrawMapRow(2, LoadMap(0) + MapTilesPerRow)
+' DrawMapRow(4, LoadMap(0) + MapTilesPerRow * 2)
+InitMap()
+
+playerX = 128 - 16
+playerY = PlayerMaxY
+
+ResetShots()
+
+do
+	' *** Player ***
+	
+	playerFrame = PlayerFrameCenter
+
+	joy = ReadJoypad1()	
+	
+	if joy band joyLeftMask then
+		playerX = playerX - 2
+		playerFrame = PlayerFrameLeft
+	elseif joy band joyRightMask then
+		playerX = playerX + 2
+		playerFrame = PlayerFrameRight
+	end if
+	
+	if playerX < PlayerMinX then
+		playerX = PlayerMinX
+	elseif playerX > PlayerMaxX then
+		playerX = PlayerMaxX
+	end if
+	
+	if joy band joyUpMask then
+		playerY = playerY - 2
+	elseif joy band joyDownMask then
+		playerY = playerY + 2
+	end if
+	
+	if playerY < PlayerMinY then
+		playerY = PlayerMinY
+	elseif playerY > PlayerMaxY then
+		playerY = PlayerMaxY
+	end if
+
+	if joy band joyFireAMask then
+		if not playerFireDelay then
+			AddShot(playerX, playerY, 0)
+			AddShot(playerX, playerY, 1)
+			playerFireDelay = 30
+		end if
+	end if
+
+	if playerFireDelay then
+		playerFireDelay = playerFireDelay - 1
+	end if
+		
+	HandleShots()
+'	MoveShot2(@shots)
+	
+	' *** Draw ***
+
+	ResetSprites()	
+	DrawPlayerShip()
+	DrawShots()
+	FinishSprites()
+	
+	if not mapSubScroll then
+		PrepareNextMapLine()
+	else
+		mapSubScroll = mapSubScroll - 1
+	end if
+	
+	if mapBkgScroll = 0 then
+		mapBkgScroll = BackgroundPixelMaxY - 1
+	else
+		mapBkgScroll = mapBkgScroll - 1
+	end if
+	
+	WaitForVBlankNoInt()
+	UpdateSprites()
+	ScrollY(mapBkgScroll)
+	
+	frameTimer = frameTimer + 1
+loop
+
+
+asm
+PathTable:
+	.dw TestPath
+	.dw TestPath2
+	
+TestPath:
+;	.db $69, $4B, $2F, $0F, $0F, $AF, $CB, $E9, $E1, $C3, $A7, $80, 13
+;	.db $0F, $2F, $1F, $0F, $0F, $FE, -7
+;	.db $0F, $FE, -3
+;	.db $09, $80, 3
+	.db $91, $00, $91, $00, $A2, $A2, $C3, $A2, $C3, $A0, $99, $0A, $0B, $0C, $0D, $80, 3
+	
+TestPath2:
+	.db $0F, $80, 3
+
+
+TestMap:
+	;
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	;
+	.db $00, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $00	
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $01, $01, $01, $01, $01, $01, $00, $00, $00, $00, $00	
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $00	
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	;
+	.db $00, $00, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $00	
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $00	
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $01, $01, $00
+	.db $00, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $00, $00	
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	;
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $01, $01, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	;
+	.db $00, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $00	
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $01, $01, $01, $01, $01, $01, $00, $00, $00, $00, $00	
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $01, $00	
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+end asm

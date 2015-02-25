@@ -1,0 +1,41 @@
+GINCS v0.50 quick HowTo:
+
+1. Compiling the example:
+
+    Go to the "example" folder and run "compile.bat". It will generate a new ROM called "game.bin".
+
+2. Creating a new project:
+
+    The easiest way to start a new project is to just create a new subfolder on GINCS's main folder, and then copy all the contents of the "example" folder to it. Then you can simply change whatever you like.
+
+3. Creating scripts:
+
+    All the scripts are stored on a subfolder called "scripts", under your project's main folder. When the game is executed, it first executes the script called "main", which can then invoke other scripts using the "#progcall" or "#proggoto" commands.
+    There's no documentation on the scripting language, yet, but you can look through the example game's scripts to undertand its commands. Don't worry, the language is pretty simple and straightforward.
+
+4. Creating images:
+
+    All the images should be stored on your project's "pics" directory, and should be on 256 color PCX format, although only the first 16 colors will be used. The image size must be no larger than 320x224, the recommended size being 320x160.
+
+4.1. Converting images using Paint Shop Pro: 
+
+    Load the desired image, resize it as needed then go to "Colors->Decrease color depth->16 colors" (If you want to create a 31 color image, use Colors->Decrease color depth->X colors, and then select 31 colors). Setup the conversion parameters as you like, then click on OK. Now, go to "Colors->Increase color depth->256 colors". Finally go to "File->Save as", select "PCX-Zsoft Paintbrush", and, on "Sub type", select "Version 5". If you did everything correctly, the resulting PCX file should be compatible with GINCS.
+
+4.2. Converting images using GIMP:
+
+4.2.1. From true color images:
+
+    Choose "Image->Mode->Indexed", mark "Generate optimized palette", set "Maximum number of colors" to 16 or 31, set the remaining options to you liking, and click on OK. Then, save your image as a PCX file.
+
+4.2.2. From 256 color images:
+
+    Choose "Image->Mode->RGB", then "Image->Mode->Indexed", mark "Generate optimized palette", set "Maximum number of colors" to 16 or 31, set the remaining options to you liking, and click on OK. Then, save your image as a PCX file.
+
+5. Creating music:
+
+    The music is stored in MVS Tracker format, under your project's "music" subfolder.
+    To compose the music, you can use the MVS Tracker for Sega Genesis, which can be found at http://www.pascalorama.info/article.php?news=30&cat=22
+    To use the music inside GINCS, compose (or convert) it on MVS Tracker, the go to "File->Export MVS0" and save it with the "MVS" extension.
+
+6. About 31 color images: 
+    GINCS' 16 color display is pretty stable, but the 31 color display, on the other is still pretty buggy at the moment. Until the bugs are resolved, if some of your 31 color images doesn't display correctly, try to reduce it to 16 colors.

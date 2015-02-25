@@ -1,0 +1,19 @@
+#name "Hiei"
+#stand "HIEI_STN.PCX" 20 20
+#defend "HIEI_DFD.PCX" 20 25
+#dodge "HIEI_FRW.PCX" 20 20
+#duck "HIEI_DCK.PCX" 20 20
+#jumpup "HIEI_JMP.PCX" 20 -8
+#jumpfall "HIEI_JMP.PCX" 20 -8
+#selface "HIEI_JMP.PCX" 20 20
+
+#attack "41236P"
+    anim Dragon
+    damage 80
+    power 200
+#end
+
+#attack "P"
+    anim Main
+    damage 10
+#end

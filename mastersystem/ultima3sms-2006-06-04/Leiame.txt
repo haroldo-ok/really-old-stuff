@@ -1,0 +1,5 @@
+Esta é uma versão pré-alfa de uma conversão do Ultima 3 de PC para o Master System.
+Ela ainda está nos estágios inicials, mas você já pode visualizar alguns dos mapas.
+Use o direcional para se movimentar pelo mapa.
+Use o botão de pausa para alternar entre o mapa principal de Sosaria e o castelo de Lord Britsh.
+Posicione seu personagem em cima de um NPC e pressione o botão 1 para ouvir o que ele/ela tem a dizer (Naturalmente, isto é apenas um teste).

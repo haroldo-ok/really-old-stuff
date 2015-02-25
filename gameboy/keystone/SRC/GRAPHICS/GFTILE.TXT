@@ -1,0 +1,182 @@
+GFTile v0.09 Alpha Release
+By Michael J. Mika - Genetic Fantasia
+4/25/97
+
+This is for preliminary testing and use.  Please back up all your
+graphic data created with this tool in case it errors out in any
+way.
+
+To run, type GFTILE.EXE from the dos prompt or with RUN from
+windows.  By adding a value after the command, you can increase the
+map memory to be used.  For example, a 64k map limit:
+
+C:>gftile.exe 64738 
+
+
+Editor Commands
+(Case Sensitive)
+
+Esc     Quits GFTile
+f       File Functions Menu
+x       Cut Current Tile to the Clipboard
+c       Copy current Tile to the Clipboard
+v       Paste current Clipboard to Tile
+E       Wipe Tile Area with Eraser Color
+F       Fill entire map with current Tile
+D       Delete tile from current pointer location on Map
+        (Works only while pointer is over the map)
+I       Insert tile into current pointer location on Map
+        (Works only while pointer is over the map)
+t       Type Alphanumerically onto the map (Enter exits)
+        Alphabet taken from current Tile and up.
+m       Map Menu
+4,8,6,2 Scroll map
+5       Go to map position 0,0
+C       Change Core automatically.  Pointer must be over the map area.
+        When pressed, the current map character is replaced by the
+        current tile in the tile area.  All other characters are adjusted.
+        This is necessary for graphic ripping.
++/-     Move left or right of the tile set.  Useful when piecing together
+        maps.  Pointer isn't necessary to advance a tile.
+a/A     Insert/Delete a column under the pointer in the map editor window.
+Pgup    Map window up one page
+Pgdn    Map window down one page
+Home    Go to 0,0 in map window
+End     Go to the last row of the map
+CtrlHme Go to the first column of the map
+CtrlEnd Go to the last column of the map
+ArrwKys Scroll the current Tile in any direction.
+X,Y,R   Flip X, Flip Y, Rotate 90 degrees left
+
+
+File Functions Menu
+
+1       Load a Tile Binary
+        Load A Binary GB graphic format.  Hold down shift and press
+        this option to load from current Tile.
+
+2       Save a Tile Binary
+        Save A Binary GB graphic format.  Hold down shift and press
+        this option to save UP TO current cursor position.
+
+3       Save TASM format.
+        Saves the tiles into a text format parsed for TASM.
+        (I.E. .DB $ff,$00,$cf,$20)
+
+4       Directory
+        Not implemented.
+
+5       Load a Map Binary
+        Load a map in binary format.  Note:  Map widths & heights are
+        not stored.  Be sure to write down your W&H's when you save.
+        (See Map Menu-Map Dims)
+
+6       Save a Map Binary
+        Save a map as binary.  This does not save the Width and Height.
+        If you do not set your width and height, the map may look
+        skewed when reloaded.  Simply set your Width and height and all
+        should be corrected.
+
+7       Save a Map in Tasm format
+        Save the map into the parsed text format identified by TASM.
+        Simply include this file into your .ASM file.
+
+
+Map Menu
+
+1       Change Core value.  This is the same as the C function
+        during editing.  It is absolutely necessary for graphics
+        ripping.  For instance:  Say the Source reads in a data
+        file and adds a value of 5 to each value.  A becomes
+        F.  Subtract five and it become A again.  So,
+        CAR turns into HFW.  By entering a value of -5 into
+        the core, it descrambles HFW into CAR on the map!
+        If you use the HeroZero text demo, you will need to
+        use this function if you load a screen in as a binary.
+
+2       Change Map Dimensions
+        You can change the map's width and height at any time.
+        For your own knowledge, create a 10 x 10 map, draw something
+        and then change the dimension to 20 x 20.. After looking at
+        the scrambled map, change the dimensions back to 10 x 10.
+        It corrects itself!
+
+3       Not yet implemented.
+
+
+The Tile Drawing Window
+
+Left Mouse Button
+
+        While within the grid, this plots your current
+        pen color.  Press the Left Mouse button over
+        1 of the 4 colors to change your current pen
+        color.
+
+Right mouse Button
+
+        While within the grid, this plots your current
+        eraser color.  Press the right mouse button
+        over the four colors to choose a new eraser color.
+
+The Tile Set Window
+
+Right mouse Button
+
+        While in the tile set, the Right mouse button will
+        draw across the set with the current pen color.
+        Not quite working correctly, but you can get the
+        idea.
+
+The Map Drawing Window
+
+The map window is the same size as the viewable are on the
+gameboy (So I think).  To extend beyond, simply scroll to the
+desired area.  This is effective because A) I didn't have any
+more room and I wanted people to see everything, and B) you
+can see how players will see your map.
+
+Left Mouse Button
+
+        While within the map window, the left button
+        draws the current tile.
+
+Right Mouse Button
+
+        While within the window, the right mouse button
+        selects the tile under the pointer as the new
+        tile.
+
+Borders
+
+        Map borders are drawn to signify you have reached
+        maps edge.  Drawing on this border still
+        affects memory.
+
+
+Technical info:
+
+Be gentle!  This is a QBASIC program!  UGH!  Maps only can have
+up to 8k right now.  I know this is bad, but hey.  Plus, there
+may be MANY bugs.  Please report any to me.
+
+History:
+
+4/25/97 Added extra functions to make life that much easier.  A
+        lot of reported bugs fixed.  Keep sending e-mail with
+        ideas.
+
+4/20/97 What bugs I've noticed are now gone.  Many more I'm sure.
+        Just needed this thing!  Hopefully it will implement all
+        of your ideas.  As it stands now, it is pretty powerful
+        for what it is.
+
+4/19/97 Jeff's plea for a Map editor and my need for some organization
+        forces me to write this program.
+
+WHAT YOU SHOULD HAVE:
+
+gftile.exe      The executable
+gftile.txt      This document
+font.bin        Yar 2.0 font for your pleasure
+

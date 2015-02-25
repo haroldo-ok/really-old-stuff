@@ -1,0 +1,104 @@
+
+
+                                  STORMER v1.0
+
+                        by Haroldo de Oliveira Pinheiro
+
+
+============
+Introduction
+============
+
+    STORMER is a fast-action shoot-em-up for the IBM-PC, based on an old
+ Atari 2600 classic, TURMOIL.
+    Your objective in this game is simple: Shoot them before they hit you.
+
+===================
+System requirements
+===================
+
+    To play STORMER, you will need:
+
+      -386 compatible CPU
+      -VGA video card
+      -a mouse
+
+    For maximum enjoyment, the recommended configuration is:
+
+      -a 486DX2-66 or better
+      -VGA video card (no SVGA support, yet)
+      -a mouse
+      -a soundcard (SB, SB Pro, SB 16 or GUS)
+      -VERY FAST REFLEXES!!!
+
+=========
+The story
+=========
+
+    Story? This is a shoot-em-up, not a RPG!
+    Okay, okay. So you want a story, anyway. Let me see...
+    The alien invasion fleet is hurtling towards earth, and only you
+ and your STORMER space ship can save our planet from destruction.
+    (OK, this story is simply horrible, but I'm a programmer, not a writer)
+
+===========
+How to play
+===========
+
+    When you start the game, the first thing you will see is a little
+ intro screen, after wich you will see a little menu, with a demonstration
+ of the game running on the background.
+    The menu should be pretty self-explanatory, but I'll describe it anyway:
+
+          Start new game        -      Starts a new game
+          Instructions          -      Brief instuctions of how to play
+          Credits               -      Game credits and some technical info
+          Exit to DOS           -      Exits to DOS
+
+    To activate an option, just press the key indicated by the letter in
+ red.
+    Once inside the game, you can use the following commands:
+          
+          Mouse                 -      Moves your ship
+          L/R Mouse buttons     -      Fire your cannons
+          P                     -      Pauses/Unpauses the game
+          +,-                   -      Increase/Decrease vertical
+                                       mouse sensitivity
+          ],[                   -      Increase/Decrease horizontal
+                                       mouse sensitivity
+          ESC                   -      Aborts the game
+
+    As mentioned above in this document, the objective in this game is
+ very simple, you just have to kill anything in your sight. After blowing up
+ a certain number of enemies, you will warp to the next level, with new and
+ faster enemies. Of course, each killed enemy increases your score. When you
+ lose all your lives, you'll see a screen showing the high scores. If you
+ do well enough, you will see a little blinking message in the high score
+ table, asking for you to enter your name.
+
+=====================
+Technical information
+=====================
+    
+    This game was made in about two months by me, Haroldo de Oliveira Pinheiro,
+ with Turbo Pascal 7.0(TM), during my spare time.
+    I've used the XLib graphics library for the graphics, and DSIK for the
+ sound system.
+    The game uses a planar high-resolution mode X 320x400, no split-screen.
+ All the sprites were drawn using the BEX sprite editor, which came with the
+ TP version of XLib. The intro screen was drawn with Aldus Photo Styler(TM)
+ and Paint Shop Pro 4(TM).
+    As said above, the Digital Sound Interface Kit (DSIK) was used to handle
+ the sounds. I've selected the sounds from some sound effects CD's, and
+ modified them a little with Goldwave(TM).
+
+==========
+Disclaimer
+==========
+
+    The author shall have no liability for any damages arising out of or
+ resulting from the use of this software.
+    Turbo Pascal, DSIK, Aldus Photo Styler, Paint Shop Pro and Goldwave are
+ trademarks of whoever trademarked 'em, and their use in this document is
+ not to be taken as a challenge to such a trademark.
+

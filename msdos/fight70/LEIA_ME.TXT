@@ -1,0 +1,276 @@
+
+                             FIGHTX GAME SYSTEM v0.67
+                         por Haroldo de Oliveira Pinheiro
+
+                             MANUAL DE INSTRU€åES
+
+
+    Esse ‚ o manual de instru‡äes do sistema FIGHTX v0.67, sistema para
+cria‡Æo de jogos de luta. NÆo ‚ exatamente o que eu chamaria de um "manual
+definitivo", mas sabe como ‚, eu sou um programador, nÆo um escritor.
+
+    0. Instru‡äes B sicas
+
+        Essa se‡Æo cont‚m apenas as instru‡äes b sicas do jogo, caso vocˆ
+    s¢ queira us -lo para jogar, obviamente.
+
+        0.1. Iniciando o jogo
+
+            Para rodar o jogo, basta ir para o prompt do MS-DOS, mudar para o
+        diret¢rio onde vocˆ instalou o jogo e digitar FIGHT. O jogo dever  se
+        iniciar automaticamente. Se vocˆ preferir rod -lo pelo Windows, basta
+        executar o arquivo FIGHT.EXE.
+
+        0.2. Som
+
+            O programa procura pela vari vel de ambiente BLASTER para saber se
+        h  uma placa de som compat¡vel com a Sound Blaster instalada em seu
+        micro. Caso nÆo a encontre, ele rodar  sem som. O que? Vocˆ nÆo sabe o
+        que ‚ a vari vel BLASTER? O Windows est  sugando o seu c‚rebro, meu
+        amigo! 8-)
+
+        0.3. Controles
+
+            A versÆo atual do FIGHTX s¢ aceita comandos de teclado. Os
+        comandos sÆo os seguintes:
+
+            Comando          Tecla Jogador 1       Tecla Jogador 2
+
+            Cima             Seta para cima        U
+            Baixo            Seta para baixo       J
+            Esquerda         Seta para a esq.      H
+            Direita          Seta para a dir.      K
+            Soco             Control               S
+            Chute            Alt                   D
+
+             prov vel que em alguma versÆo futura eu inclua a posibilidade
+        de configurar o teclado, ou at‚ mesmo a possibilidade de jogar com
+        joystick, mas nÆo conte com isso tÆo cedo...
+
+        0.4. Jogando
+
+            Ap¢s iniciar o jogo (vide se‡Æo 0.1), ele dever  gastar um curto
+        intervalo de tempo carregando dados, e ap¢s isso, ele apresentar  a
+        tela-t¡tulo. Uma vez estando na tela-t¡tulo, basta apertar Enter.
+        Aparecer , entÆo, a tela de sele‡Æo de personagens. Selecione o seu
+        lutador, e entÆo aperte o botÆo de Soco (vide se‡Æo 0.3). Caso o
+        jogador 2 deseje entrar na disputa, basta que ele aperte seu
+        respectivo botÆo de soco.
+            Ap¢s selecionar o seu lutador, o programa dever  gastar mais algum
+        tempo carregando dados, e entÆo entrar  na luta propriamente dita.
+        Para pular, mova para cima, para abaixar, mova para baixo, para
+        defender, mova para a dire‡Æo oposta ao seu inimigo. os botäes de
+        Soco e Chute acionam soco e chute, obviamente. Para executar os golpes
+        especiais, use sequˆncias de direcional seguidas de soco ou chute (Se
+        vocˆ j  jogou algum jogo de luta, deve saber do que eu estou falando).
+
+    1. Personalizando o jogo FIGHTX
+
+        O sistema FIGHTX ‚ mais do que um simples jogo: ‚ um sistema completo
+    para a cria‡Æo de jogos de luta! Vocˆ pode facilmente adicionar os seus
+    pr¢prios gr ficos, suas pr¢prias m£sicas, o seu pr¢prio som, e os seus
+    pr¢prios lutadores ao jogo. Em suma: vocˆ pode criar o seu pr¢prio jogo de
+    luta! Esse cap¡tulo explica exatamente como fazer isso.
+
+        1.1. A interface
+
+            BKGND.PCX -> Cont‚m os gr ficos usados na interface que aparece
+                      durante as lutas propriamente ditas
+            CONSOLE.PCX ->  o papel de parede do console do jogo
+            TITLSMAL.PCX -> O t¡tulo que aparece no topo do console
+            TITLBIG.PCX -> A tela-t¡tulo do jogo, propriamente dita
+            TIT_BKGD.PCX -> O papel de parede que aparece no fundo da
+                         tela-t¡tulo
+            SEL_BKGD.PCX -> O papel de parede da tela de sele‡Æo de lutadores
+            MNTAIN.PCX -> O cen rio de fundo default, caso o lutador nÆo tenha
+                       um cen rio pr¢prio
+
+            1.1.1. O arquivo CREDITS.LST
+
+                O arquivo CREDITS.LST ‚ apenas um arquivo texto comum, que
+            cont‚m os cr‚ditos do jogo.
+
+        1.2. Os lutadores
+
+            Eu acho que o t¡tulo desta se‡Æo j  diz tudo! ;-)
+
+            1.2.1. O arquivo FIGHTERS.LST
+
+                Um simples arquivo de texto, contendo uma lista dos arquivos
+            que cont‚m os lutadores.
+                IMPORTANTE!!! - na verdade, quando o arquivo FIGHTERS.LST se
+            refere a um arquivo como BDROID.FGT, na verdade ele est  apontando
+            para dois arquivos: BDROID.FGT (o lutador) e BDROID.ANS (script de
+            anima‡Æo do lutador).
+
+            1.2.2. Os arquivos .FGT
+
+                Os arquivos FGT sÆo arquivos texto que cont‚m o script que
+            define o lutador. Seus principais comandos sÆo:
+
+                #name <nome do lutador>
+                    Cont‚m o nome do lutador, entre aspas ("")
+
+                #stand <imagem.pcx> <offset X> <offset Y>
+                    Cont‚m a imagem do lutador parado. Os offsets servem para
+                  ajustar o centro da imagem
+
+                #defend <imagem.pcx> <offset X> <offset Y>
+                    Imagem do lutador em posi‡Æo de defesa
+
+                #dodge <imagem.pcx> <offset X> <offset Y>
+                    Imagem do lutador em posi‡Æo de esquiva
+
+                #duck <imagem.pcx> <offset X> <offset Y>
+                    Imagem do lutador abaixado
+
+                #jumpup <imagem.pcx> <offset X> <offset Y>
+                    Imagem do lutador na subida do pulo
+
+                #jumpfall <imagem.pcx> <offset X> <offset Y>
+                    Imagem do lutador na descida do pulo
+
+                #hit <imagem.pcx> <offset X> <offset Y>
+                    Imagem do lutador atingido
+
+                #selface <imagem.pcx> <offset X> <offset Y>
+                    Imagem do lutador na tela de sele‡Æo de lutadores
+
+                #selicon <imagem.pcx>
+                    Öcone do lutador na tela de sele‡Æo
+
+                #bgmusic <arquivo.mod>
+                    M£sica do cen rio de luta do lutador
+
+                #background <arquivo.pcx>
+                    Imagem do cen rio do lutador
+
+                #attack <sequˆncia>
+                    parƒmetro1
+                    parƒmetro2
+                    .
+                    .
+                #end
+                    Define cada golpe do lutador. A sequˆncia indica que
+                  sequˆncia de comandos ir  disparar aquele determinado golpe,
+                  sendo que os n£meros indicam posi‡äes do direcional (veja o
+                  seu teclado num‚rico para entender melhor qual n£mero ‚ o
+                  quˆ), enquanto P e K indicam soco e chute, respectivamente.
+                  ATEN€ÇO: Devido … forma como o programa verifica a lista de
+                  golpes, os golpes com sequˆncias mais longas devem vir antes
+                  dos de sequˆncias mais curtas.
+                    Os parƒmetros do comando attack sÆo:
+
+                      anim <nome da anima‡Æo>
+                          Indica o nome da anima‡Æo que representa o ataque.
+                        Veja abaixo para conhecer a estrutura do script de
+                        anima‡Æo
+
+                      damage <dano>
+                          Indica o dano provocado pelo ataque
+
+                      power <energia>
+                          Indica a quantidade de energia necess ria para
+                        desferir o ataque
+
+                      aerial
+                          Se presente, indica que o ataque ‚ a‚reo
+
+                      midair
+                          Se presente, indica que o ataque deve ser dado em
+                        meio ao pulo
+
+        1.3. As anima‡äes
+
+            Essa se‡Æo do documento explica a estrutura dos scripts de
+        anima‡Æo usados pelo jogo.
+
+            1.3.1. Sprites
+
+                O sistema de anima‡Æo usado pelo sistema FIGHTX ‚ baseado em
+            sprites. Sprites sÆo imagens que possuem partes transparentes, e
+            podem se mover livremente pela tela.
+                Um sprite ‚ definido da seguinte maneira:
+
+                #sprite <nome do sprite>
+                    image <imagem.pcx> (<X>,<Y>[,<Z>])
+                    colors <n£mero de cores> [<remapear para>]
+                #end
+
+                    <imagem.pcx> indica o nome do arquivo que cont‚m a imagem
+                  do sprite
+                    X,Y e Z sÆo coordenadas usadas para ajustar o centro do
+                  sprite
+                    colors indica quantas cores foram efetivamente usadas no
+                  arquivo, e para quais cores elas devem ser remapeadas. Desta
+                  maneira, colors 64 128 indica que as cores 0 a 63 devem ser
+                  remapeadas para as cores 128 a 191, e que todas as cores
+                  restantes devem ser remapeadas para 0 (cor transparente)
+
+            1.3.2. Sequˆncias de sprites
+
+                Sequˆncias de sprites nada mais sÆo do que um conjunto de
+            sprites que sÆo mostrados em sequˆncia, um ap¢s o outro.
+                SÆo definidas da seguinte maneira:
+
+                #spriteseq <nome da sequˆncia>
+                    frame <nome do sprite 1> <dura‡Æo 1>
+                    frame <nome do sprite 2> <dura‡Æo 2>
+                    .
+                    .
+                #end
+
+                    <nome do sprite> indica o nome do sprite que ser  mostrado
+                    <dura‡Æo> indica por quantos cent‚simos de segundo aquele
+                  sprite ser  mostrado, antes de passar para o pr¢ximo. Ap¢s
+                  ter terminado de exibir o £ltimo sprite, ele volta para o
+                  primeiro.
+
+            1.3.3. Anima‡äes
+
+                Finalmente chegamos na parte pr tica: a anima‡Æo propriamente
+            dita.
+                Uma anima‡Æo ‚ definida da seguinte forma:
+
+                #anim <nome da anima‡Æo> <dura‡Æo>
+                    comando1
+                    comando2
+                    comando3
+                    .
+                    .
+                #end
+                    <dura‡Æo> ‚ dado em cent‚simos de segundo.
+
+                Os comandos que podem ser inclu¡dos em uma anima‡Æo sÆo:
+                 
+                place <nome do sprite> <(X,Y,Z)> [<quando>]
+                    Move um sprite para uma dada posi‡Æo, em um dado momento
+
+                path <nome do sprite> <fim> <in¡cio> <(X,Y,Z)> [<(X,Y,Z)> ...]
+                    Move um sprite suavemente por uma s‚rie de posi‡äes
+
+                show <nome do sprite> [<quando>]
+                    Torna o sprite vis¡vel em um dado momento
+
+                hide <nome do sprite> [<quando>]
+                    Torna o sprite invis¡vel em um dado momento
+
+                write <texto> <cor> <momento inicial> <momento final> [<atraso>]
+                    Escreve um texto em um dado momento
+
+                stars <tipo> <in¡cio> <fim> <cor inicial> <(R,G,B)> <cor final> <(R,G,B)> <quantidade> <velocidade>
+                    Gera "estrelas" no fundo da tela. Os tipos sÆo:
+                        x -> movimento horizontal
+                        y -> movimento vertical
+                        z -> zoom
+                        n -> em forma de pontos
+                        v -> em forma de linhas verticais
+                        h -> em forma de linhas horizontais
+
+                flash <fim> <in¡cio> <per¡odo> <(R,G,B)> [<(R,G,B)> ...]
+                    Faz a tela piscar em um dado momento
+
+                background <nome do sprite> <fim> <in¡cio> <(velocidadeX,vel.Y,vel.Z)> [<(posi‡ÆoX,pos.Y,pos.Z)>]
+                    Usa um sprite como papel de parede
+
+

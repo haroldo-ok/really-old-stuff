@@ -1,0 +1,18 @@
+#loadbkg cave2
+"In Cobble Crawl"
+You are crawling over cobbles in a low passage.
+There is a dim light at the east end of the passage.
+/i
+
+#loadbkg cave1
+"Orange River Chamber"
+You are in a splendid chamber thirty feet high.
+The walls are frozen rivers of orange stone.
+An awkward canyon and a good passage exit from east and west sides of the chamber.
+/i
+
+#playmusic yehat
+Thanks for playing the demo.
+/i
+
+#return

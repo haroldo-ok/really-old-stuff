@@ -1,0 +1,41 @@
+:top
+?n?n?e?e?s?s?w?w
+#if fl0002 #goto counterc
+#set fl0002
+#goto top
+:counterc
+?e?e?n?n?w?w?s?s
+#clear fl0002
+#if fl0001 #goto top
+#set fl0001
+This is a test for the automatic wordwrapping capability of the engine. I hope it works.
+More text.
+More text.
+Yet more text.
+Aren't you tired of seeing text?
+Of course you are!
+Do you want to test the menu system?
+!answy;Yes! I want.
+!answn;No! No! NOOOooooo....
+/i
+:answy
+Good, because that's exactly what you have done now!
+#goto top
+:answn
+Well, you've just tested it anyway!
+#goto top
+:touch
+Hey, watch out!!
+/i
+#goto top
+:talk
+I... don't have anything to say.
+/i
+#goto top
+:thud
+/i
+#if fl0003 #goto top
+#set fl0003
+Ouch!
+/i
+#goto top

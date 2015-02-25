@@ -1,0 +1,27 @@
+
+dim randomSeed as UInteger
+
+' Based on code found on Z80 bits
+' http://baze.au.com/misc/z80bits.html#4.2
+function fastcall Random() as UInteger
+	asm
+		ld	hl, (zb_randomSeed)
+		ld	d, h
+		ld	e, l
+		ld	a, d
+		ld	h, e
+		ld	l, 253
+		or	a
+		sbc	hl, de
+		sbc	a, 0
+		sbc	hl, de
+		ld	d, 0
+		sbc	a, d
+		ld	e, a
+		sbc	hl, de
+		jr	nc, Random_2
+		inc	hl
+	Random_2:
+		ld	(zb_randomSeed), hl
+	ret	end asm
+end function

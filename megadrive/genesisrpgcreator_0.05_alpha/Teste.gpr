@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<GenesisRPGProject Version="0.05" System="Sega Genesis / Mega Drive" SystemID="GENESIS">
+ <SystemInfo SystemID="GENESIS" SystemClass="genesisRPGCreator.sysdeps.segagenesis.GenesisFactory" PaletteCount="4" SprPaletteCount="0" ColorsPerPalette="16" BitsPerPixel="9" ColorCodec="genesisRPGCreator.sysdeps.segagenesis.GenesisColorCodec"/>
+ <Palettes>
+  <Palette ID="DEFAULT" Description="Default palette" Size="16">
+   <Color Index="0" RGB="0"/>
+   <Color Index="1" RGB="80"/>
+   <Color Index="2" RGB="8000"/>
+   <Color Index="3" RGB="8080"/>
+   <Color Index="4" RGB="800000"/>
+   <Color Index="5" RGB="800080"/>
+   <Color Index="6" RGB="808000"/>
+   <Color Index="7" RGB="808080"/>
+   <Color Index="8" RGB="606060"/>
+   <Color Index="9" RGB="6060e0"/>
+   <Color Index="10" RGB="60e060"/>
+   <Color Index="11" RGB="60e0e0"/>
+   <Color Index="12" RGB="e06060"/>
+   <Color Index="13" RGB="e060e0"/>
+   <Color Index="14" RGB="e0e060"/>
+   <Color Index="15" RGB="e0e0e0"/>
+  </Palette>
+ </Palettes>
+ <TileSets>
+  <TileSet ID="TESTE" Description="" TileCount="32" CharWidth="8" CharHeight="8" TileWidth="2" TileHeight="2">
+   <Data encoding="base64" compression="gzip">
+    H4sIAAAAAAAAAO1V7XGEIBClAmdSQsYKoh3kbCElxA7urAWPBhbSgFCBShFUQA3ZBeQuM5dMfpEf4TGP57oLjw9nnKbpPI7j+yO+ISbEBYNHPP8u/+P8EgHUSQVylhELKJIYxl5RlYovYr3OSZUHan0bMqtbL5VKLscITU/4ihE8Yw1z1LEg3rGiuPMP6stZD8Pw2vf9S2AXtUvxEwLzwwkDZHvqgmY+f59v7/Jp/i56tMkrzU9roPNuglLkkhaEZ9m/9PkzdnxvLn9/gYVgNxDWAN+N5MZoQKKCuEqwnGAtF1S0a2mNIWqLxdZKWDG9Y63VEp+Ar9zyTWyghYEdDHwskkuAbYZ140LPwM0V+LLTMGyrNQsPi8jnnjZf+v5dg83hEg42rqw/a9DRk2YW9T/2Tw2tnS97A1/8/+L8Hfm7sG+XWlF/79Gf1MX7L/0DqqioqKioqPhP+ASLRM6BABAAAA==
+   </Data>
+  </TileSet>
+ </TileSets>
+ <Maps>
+  <Map ID="MAPTEST" Description="" Width="64" Height="64">
+   <Data encoding="base64" compression="gzip">
+    H4sIAAAAAAAAAO3UMQrAIAwFUAfvf+ZCRxsxFdqm8B5k0CEkfLQ1gFMP6o37asa5ZnOu5s/2qSaaO8prlWe2TzW7uWX2/wP7X887/9nd98K3onyeLgAAAAAAAAAAAAAAAIDQAfev9ToAQAAA
+   </Data>
+  </Map>
+ </Maps>
+</GenesisRPGProject>

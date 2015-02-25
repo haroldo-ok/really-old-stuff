@@ -1,0 +1,253 @@
+	org 32768
+__START_PROGRAM:
+	di
+	push ix
+	push iy
+	exx
+	push hl
+	exx
+	ld hl, 0
+	add hl, sp
+	ld (__CALL_BACK__), hl
+	ei
+__LABEL0:
+	call _ReadJoypad1
+	ld (_joy), a
+	ld hl, 4
+	push hl
+	ld a, (_joy)
+	ld l, a
+	ld h, 0
+	call _AndW
+	ld a, h
+	or l
+	jp z, __LABEL2
+	ld hl, (_padSpdX)
+	ld de, -32
+	add hl, de
+	ld (_padSpdX), hl
+	push hl
+	ld de, 64512
+	pop hl
+	or a
+	sbc hl, de
+	add hl, hl
+	jp nc, __LABEL5
+	ld hl, 64512
+	ld (_padSpdX), hl
+__LABEL5:
+	jp __LABEL3
+__LABEL2:
+	ld hl, 8
+	push hl
+	ld a, (_joy)
+	ld l, a
+	ld h, 0
+	call _AndW
+	ld a, h
+	or l
+	jp z, __LABEL6
+	ld hl, (_padSpdX)
+	ld de, 32
+	add hl, de
+	ld (_padSpdX), hl
+	push hl
+	ld hl, 1024
+	pop de
+	or a
+	sbc hl, de
+	add hl, hl
+	jp nc, __LABEL9
+	ld hl, 1024
+	ld (_padSpdX), hl
+__LABEL9:
+	jp __LABEL7
+__LABEL6:
+	ld hl, (_padSpdX)
+	push hl
+	ld de, 0
+	pop hl
+	or a
+	sbc hl, de
+	add hl, hl
+	jp nc, __LABEL12
+	ld hl, (_padSpdX)
+	call __NEGHL
+	ld (_padSpdX), hl
+	jp __LABEL13
+__LABEL12:
+	ld hl, 0
+	ld (_padSpdX), hl
+__LABEL13:
+__LABEL11:
+__LABEL7:
+__LABEL3:
+	ld hl, (_padX)
+	push hl
+	ld hl, (_padSpdX)
+	ex de, hl
+	pop hl
+	add hl, de
+	ld (_padX), hl
+	push hl
+	ld de, 0
+	pop hl
+	or a
+	sbc hl, de
+	add hl, hl
+	jp nc, __LABEL14
+	ld hl, 0
+	ld (_padX), hl
+	jp __LABEL15
+__LABEL14:
+	ld hl, (_padX)
+	push hl
+	ld hl, 13824
+	pop de
+	or a
+	sbc hl, de
+	add hl, hl
+	jp nc, __LABEL17
+	ld hl, 13824
+	ld (_padX), hl
+__LABEL17:
+__LABEL15:
+	ld a, 3
+	push af
+	ld a, 128
+	push af
+	ld hl, (_padX)
+	ld b, 6
+__LABEL18:
+	sra h
+	rr l
+	djnz __LABEL18
+	ld a, l
+	push af
+	xor a
+	call _SetSprite
+	call _WaitForVBlankNoInt
+	call _UpdateSprites
+	jp __LABEL0
+__LABEL1:
+	ld hl, 0
+	ld b, h
+	ld c, l
+__END_PROGRAM:
+	di
+	ld hl, (__CALL_BACK__)
+	ld sp, hl
+	exx
+	pop hl
+	exx
+	pop iy
+	pop ix
+	ei
+	ret
+__CALL_BACK__:
+	DEFW 0
+_UpdateSprites:
+#line 1
+		jp UpdateSprites
+#line 2
+_UpdateSprites__leave:
+	ret
+_WaitForVBlankNoInt:
+#line 8
+		jp WaitForVBlankNoInt
+#line 9
+_WaitForVBlankNoInt__leave:
+	ret
+_SetSprite:
+#line 15
+		exx
+		pop hl
+		exx
+		ld d, 0
+		ld e, a
+		pop bc
+		ld hl, hw_sprites_y
+		add hl, de
+		pop af
+		ld (hl), a
+		ld hl, hw_sprites_xc
+		add hl, de
+		add hl, de
+		ld (hl), b
+		inc hl
+		pop af
+		ld (hl), a
+		exx
+		push hl
+		exx
+#line 35
+_SetSprite__leave:
+	ret
+_ReadJoypad1:
+#line 52
+		in	a, ($dc)
+		cpl
+#line 54
+_ReadJoypad1__leave:
+	ret
+_ReadJoypad2:
+#line 59
+		in	a, ($dc)
+		cpl
+		rla
+		rla
+		rla
+		and	$03
+		ld	l, a
+		in	a, ($dd)
+		cpl
+		add	a, a
+		add	a, a
+		or	l
+#line 71
+_ReadJoypad2__leave:
+	ret
+_AndW:
+#line 76
+		pop bc
+		pop de
+		ld a, l
+		and e
+		ld l, a
+		ld a, h
+		and d
+		ld h, a
+		push bc
+#line 85
+_AndW__leave:
+	ret
+#line 1 "neg16.asm"
+	; Negates HL value (16 bit)
+__ABS16:
+		bit 7, h
+		ret z
+	
+__NEGHL:
+		ld a, l			; HL = -HL
+		cpl
+		ld l, a
+		ld a, h
+		cpl
+		ld h, a
+		inc hl
+		ret
+	
+#line 213 "test.zxb"
+	
+ZXBASIC_USER_DATA:
+_padX:
+	DEFB 00, 00
+_joy:
+	DEFB 00
+_padSpdX:
+	DEFB 00, 00
+	; Defines DATA END --> HEAP size is 0
+ZXBASIC_USER_DATA_END EQU ZXBASIC_MEM_HEAP
+	; Defines USER DATA Length in bytes
+ZXBASIC_USER_DATA_LEN EQU ZXBASIC_USER_DATA_END - ZXBASIC_USER_DATA
+	END

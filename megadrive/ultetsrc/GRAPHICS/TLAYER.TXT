@@ -1,0 +1,204 @@
+
+ Tile Layer v0.50b
+ Console graphics editor
+
+ by SnowBro <kentmhan@online.no>
+
+ Released 12/14/98
+
+
+ What's new:
+ -----------
+
+ - added 1BPP / SNES / Virtual Boy / SMS support!
+ - importable palette (tlayer.pal) is now in R,G,B format
+ - palette can be saved (by pressing F2)
+ - removed the grids; they made it hard to see exactly how
+   the tiles pieced together
+ - clipboard expanded to 17x8 tiles
+
+
+ Getting started:
+ ----------------
+
+ A quick explanation of the program follows. I suggest you read it,
+ in order to clearly understand how everything works. If you send me
+ an email asking about something that is already answered in the next
+ paragraphs of this document, your letter will be ignored. If there's
+ something in this document that you feel needs to be explained
+ better, however, then don't hesitate to email me about it.
+
+
+ Features overview:
+ ------------------
+
+ - 1BPP / NES / Game Boy / Virtual Boy / SNES / SMS support
+ - Edit two files at once, of same or different formats
+ - Copy data from one graphics format to another
+ - Huge clipboard (17x8 tiles)
+ - Fast
+ - Editing functions: FlipX, FlipY, Rot90
+ - Customizable colors
+ - Automatic checksum repair of GameBoy ROMs
+
+
+ Keys:
+ -----
+
+ The main editing in Tile Layer is mouse-driven, but you may want
+ to push the following keys at one time or another.
+
+ ESC    - Exit program
+ F1     - Switch tile format
+ F2     - Save palette
+ Up     - Scroll one row up
+ Down   - Scroll one row down
+ Left   - Finetune offset (-1)
+ Right  - Finetune offset (+1)
+ PgUp   - Scroll one page up
+ Pgdown - Scroll one page down
+ TAB    - Switch file (when two files are loaded)
+
+
+ Dual file editing:
+ ------------------
+
+ One of the key features of Tile Layer is the ability to have two ROM
+ files loaded simultaneously. This is done by specifying two filenames at
+ the DOS prompt, separated by spaces, like so:
+
+ tlayer mario.nes metroid3.smc
+
+ In the main editor, you can then switch between the two files by
+ pressing TAB.
+
+
+ Switching tile format:
+ ----------------------
+
+ Press F1 to toggle between the different tile formats. Although
+ Tile Layer autodetects the tile format based on the ROM file's
+ extension (.NES/.GB/.VB/.SMC/.SMS), it is sometimes necessary to
+ switch from 4-bit to 2-bit or 1-bit format, because some SNES and
+ SMS games store their graphics that way (usually fonts and stuff
+ which require few colors).
+
+
+ Moving around:
+ --------------
+
+ Arrow keys Up and Down scroll through the ROM one row of tiles at a time,
+ Page Up and Page Down take you where you want to go a bit faster. Arrow
+ keys Left and Right finetune the offset (decrease/increase  by one).
+ The offset finetuning is an *IMPORTANT* feature; I'll try to explain why.
+ Sometimes the tiles in a ROM aren't aligned at an even offset; let's say
+ the tile data starts at 1005h in the file. But Tile Layer by default
+ reads data from 0000h, 0100h, 0200h, etc., so the color info for the first
+ bitplane(s) will be wrong. In such cases you need to adjust the offset
+ by pressing arrow keys left/right until the starting offset for the
+ tiles is correct (it's usually easy to see). Try viewing the dungeon
+ graphics in "Zelda.nes" to see what I mean.
+
+
+ ROM data:
+ ---------
+
+ Select a tile from here by clicking LEFT mouse button.
+ Click RIGHT mouse button to paste the currently selected tile
+ (either a tile selected directly from the ROM data or from
+ the clipboard).
+
+
+ Clipboard:
+ ----------
+
+ Paste the tile selected from the ROM data (or from another location
+ on the clipboard) by clicking RIGHT mouse button. Select tile to edit
+ by clicking left mouse button. The clipboard is mainly a place where
+ you can arrange scattered ROM tiles in an order that forms a complete
+ picture, so that the editing gets easier. When you are editing two
+ files at once, you can paste tiles from one file onto the clipboard,
+ then switch file (by pressing TAB) and paste the tiles where you want
+ them in the other file. You don't have to go via the clipboard though;
+ just select a tile from the ROM data in one file, press TAB and
+ paste the tile data directly.
+
+ Example of how to copy tiles from a .GB ROM to a .NES ROM:
+
+ 1) Load both files in Tile Layer as explained above.
+ 3) Switch to the .GB file by using TAB, if it wasn't the first
+    file you specified on the command line.
+ 3) Locate the graphics data and copy the tiles you want to the
+    clipboard, or if you just want one tile, select it with from
+    the ROM data with the left mouse button.
+ 4) Press TAB to return to the .NES ROM.
+ 5) Copy the tiles to the ROM data and you're done!
+
+ The process can be reversed, of course. You can copy 1BPP/NES/GB/VB
+ tiles  to a SNES/SMS ROM, or vice versa, but keep in mind that when
+ copying data from a 4-bit format to a 2-bit format or lower, the upper
+ bitplanes will be lost.
+
+
+ Tile edit:
+ ----------
+
+ Left mouse button draws currently selected foreground color,
+ right mouse button draws currently selected background color.
+ Change foreground/background color by clicking left/right
+ mouse button on the desired color box to the right of the
+ drawing area. Once you're done editing a tile, copy it back
+ to the ROM (by pressing RIGHT mouse button while holding the
+ cursor over the tile you want replaced). You have to copy it
+ back yourself because when editing a tile, changes are NOT
+ written directly to the ROM. This is to give you a second
+ chance if you aren't pleased with the result and want to
+ start over with the original tile again. In any case,
+ remember to save your work often: there's no telling when
+ you'll screw up next (I do it all the time 8-) ).
+
+
+ Customizing colors:
+ -------------------
+
+ The three vertical bars to the right of the tile edit window
+ control the [R]ed, [G]reen and [B]lue component of the current
+ foreground color. They can be adjusted to your own liking.
+ When you are happy with it, press F2 to save it to "tlayer.pal".
+
+
+ Importing a palette:
+ ------------------------
+
+ When Tile Layer is started, it will check to see if there is a
+ file called TLAYER.PAL present in the directory. If there is, it
+ will be used as the default palette. The file contains RGB values
+ for the program's colors.
+ For NES ROMs, you can use NESticle's palette viewer to figure out the
+ color values for the ROM you want to edit.
+
+
+ Menu:
+ -----
+
+ Rot 90: rotates the selected tile 90 degrees.
+ Flip X: flips the selected tile horizontally.
+ Flip Y: flips the selected tile vertically.
+ Save: saves changes to file.
+ Quit: erases your hard drive. No wait, that's not it...
+       Uhm, actually, I don't remember.
+
+ Well, that's about it. If you have any questions, suggestions or
+ comments, send an email to my address, kentmhan@online.no.
+
+ Oh, one final note:
+
+ Although I've done my best to make sure that this program is totally
+ bug-free, there still MIGHT be some strange error lurking around
+ somewhere (I haven't managed to find it yet though). In other words,
+ if you use this program and Something Bad happens to you or your ROM
+ images, don't expect me to take any responsibility for it. But I can
+ probably offer you some sympathy in the form of comforting words
+ ("There there. Everything's gonna be all right.").
+
+ (c) Kent Hansen 1998

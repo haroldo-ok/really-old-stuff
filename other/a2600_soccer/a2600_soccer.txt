@@ -1,0 +1,12 @@
+Atari 2600 Soccer v0.9
+by Haroldo O. Pinheiro
+haroldoop@gmail.com
+
+This is a simple soccer game for the Atari 2600
+
+I would like to thank the following people, in no specific order:
+
+- Retrofan, for suggesting the idea;
+- Nick S. Bensema, Robin Harbron and Bob Colbert, whose codes where used as the basis for this game;
+- Cybergoth and vdub_bobby for their programming support;
+- jbanes, supercat, rjchamp3, godzillajoe, gambler172, djmips, Pac Munchkin and pmartin252 for their interest and suggestions.

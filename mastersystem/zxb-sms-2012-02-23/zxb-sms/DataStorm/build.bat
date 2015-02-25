@@ -1,0 +1,1 @@
+..\bin\zxb-sms.exe test.zxb --prg_version=0.02 --prg_name=DataStorm --author="Haroldo de Oliveira Pinheiro"

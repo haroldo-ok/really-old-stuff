@@ -1,0 +1,168 @@
+#include "hardware.zxi"
+#include "sprite.zxi"
+#include "test.zxi"
+
+
+
+const TilesPerLine as UByte = 32
+const TilesPerFrame as UInteger = TilesPerLine * 24
+
+
+
+dim frameBuffer(1 to TilesPerFrame) as UByte
+dim lineBuffer(1 to TilesPerLine) as UInteger
+
+
+
+asm
+    ld a,%11100110
+;          |||| |`- Zoomed sprites -> 16x16 pixels
+;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
+;          |||`---- 30 row/240 line mode
+;          ||`----- 28 row/224 line mode
+;          |`------ VBlank interrupts
+;          `------- Enable display
+    out ($bf),a
+    ld a,$81
+    out ($bf),a
+end asm
+
+dim i, j, k, l as UByte
+dim tile, mask0, mask1 as UByte
+dim p, p2 as UInteger
+
+sub fastcall GenerateTiles()	
+	p = @frameBuffer
+	for i = 0 to 16
+		for j = 0 to 16
+			tile = i << 4 bor j
+
+			for k = 0 to 1
+				mask0 = $00
+				if tile band $01 then
+					mask0 = $F0
+				end if		
+				if tile band $04 then
+					mask0 = mask0 bor $0F
+				end if
+			
+				mask1 = $00
+				if tile band $02 then
+					mask1 = $F0
+				end if		
+				if tile band $08 then
+					mask1 = mask1 bor $0F
+				end if
+			
+				for l = 0 to 3
+					poke p, mask0
+					p = p + 1
+					poke p, mask1
+					p = p + 1
+				next
+				
+				tile = tile shr 4			
+			next
+		next
+		
+		p = @frameBuffer
+		LoadTiles(i << 4, p, 16, 2)
+	next
+end sub
+
+
+
+const RleImmediateMask as UByte = $00
+const RleRepeatMask as UByte = $40
+const RleFrameCopyMask as UByte = $80
+const RleCmdMask as UByte = $C0
+const RleLenMask as UByte = $3F
+
+			
+dim framePage as UByte
+dim framePtr as UInteger
+dim frameByte as UByte
+dim bufferPtr as UInteger
+dim tileNumber as UInteger
+
+dim command as UByte
+dim length as UByte
+
+sub fastcall NextVideoByte()
+	frameByte = peek framePtr
+	framePtr = framePtr + 1
+	if framePtr >= $C000 then
+		framePage = framePage + 1
+		framePtr = $8000
+		SetPage2(framePage)
+	end if
+end sub
+
+sub fastcall AdvanceFrame()
+	SetPage2(framePage)
+	bufferPtr = @frameBuffer
+	tileNumber = 0
+	while tileNumber < TilesPerFrame
+		NextVideoByte()
+		
+		command = frameByte band RleCmdMask
+		length = (frameByte band RleLenMask) + 1
+		
+		if command = RleImmediateMask then
+			for i = 1 to length
+				NextVideoByte()
+				poke bufferPtr, frameByte
+				bufferPtr = bufferPtr + 1				
+			next
+		elseif command = RleRepeatMask then
+			NextVideoByte()
+			for i = 1 to length
+				poke bufferPtr, frameByte
+				bufferPtr = bufferPtr + 1				
+			next
+		elseif command = RleFrameCopyMask then
+			bufferPtr = bufferPtr + length
+		end if
+		
+		tileNumber = tileNumber + length
+	end while
+	
+	p = @lineBuffer
+	for i = 0 to 3
+		NextVideoByte()
+		poke p, frameByte
+		p = p + 1
+	next
+	LoadPalette(@lineBuffer, 4, 0)
+	
+	p = @frameBuffer
+	for i = 0 to 23
+		p2 = @lineBuffer
+		for j = 1 to TilesPerLine
+			k = peek p
+			poke UInteger p2, k
+			p = p + 1
+			p2 = p2 + 2
+		next
+		SetBkgData(@lineBuffer, 0, i, 32, 1)
+	next
+end sub
+
+GenerateTiles()
+
+
+bufferPtr = @frameBuffer
+for tileNumber = 1 to TilesPerFrame
+	poke bufferPtr, 0
+	bufferPtr = bufferPtr + 1
+next
+
+	
+framePage = 2
+framePtr = $8000
+
+AdvanceFrame()
+
+do
+	AdvanceFrame()
+loop

@@ -1,0 +1,6 @@
+Format: <tile number> [attributes]
+The attributes can tell from which directions the tile is
+blocked (TOP, LEFT, BOTTOM, RIGHT, OPEN, SOLID, SIDES, UPDOWN),
+which pallete it will use (PAL0, PAL1, PAL2, PAL3), or
+if it will appear over or under the actors (FRONT, BACK)
+Any line which is started with ; is considered to be a comment.

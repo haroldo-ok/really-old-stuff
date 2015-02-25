@@ -1,0 +1,14 @@
+'                          Line comment.
+:<labelname>               Label this line.
+/N /S /E /W                Walk one step in the specified direction. If blocked, keep trying until not blocked.
+?N ?S ?E ?W                Try walking in the specified direction. If blocked, skip to next instruction.
+/I ?I                      Do nothing (Idle) for one frame.
+#SEND <label>              Jump to the specified label.
+#GOTO <label>              Same as #SEND
+#SET <flagname>            Sets the specified flag as being true. There are 1024 flags, named FL0 to FL1023.
+#CLEAR <flagname>          Sets the specified flag to false.
+#IF <flagname> <label>     Jumps to the specified label if the flag is true.
+#IF NOT <flagname> <label> Jumps to the specified label if the flag is false.
+|<label>;[text]            Adds an option to the menu that will be presented to the user. If the option is selected, the script will jump to the specified label.
+Any line that does not start with ', :, /, ?, # ou | is considered to be plain text that will be added to the text buffer.
+Both the text buffer and the menu item list will be displayed to the user only after the program finds a command beginning with either ? or /.

@@ -1,0 +1,50 @@
+#sprite Meteor1
+    image "METEOR.PCX" (-47,-40)
+	colors 64
+#end
+
+#sprite Meteor2
+    image "METEOR.PCX" (-47,-40)
+	colors 64
+#end
+
+#sprite Meteor3
+    image "METEOR.PCX" (-47,-40)
+	colors 64
+#end
+
+#sprite Meteor4
+    image "METEOR.PCX" (-47,-40)
+	colors 64
+#end
+
+#sprite Meteor_Castle
+    image "MTCASTLE.PCX" (-94,-70)
+	colors 64
+#end
+
+#anim Intro 900
+	stars zn 0 600 129 (0,0,0) 140 (255,255,255) 255 -5
+    //
+	show Meteor_Castle 400
+	path Meteor_Castle 700 400 (160,70,-255) (160,100,100)
+    //
+	show Meteor1 300
+	path Meteor1 600 300 (140,70,-255) (70,20,100)
+	hide Meteor1 600
+    //
+	show Meteor2 200
+	path Meteor2 500 200 (260,130,-255) (320,160,100)
+	hide Meteor2 500
+    //
+	show Meteor3 100
+	path Meteor3 400 100 (200,80,-255) (290,25,100)
+	hide Meteor3 400
+    //
+	show Meteor4 000
+	path Meteor4 300 000 (110,110,-255) (50,200,100)
+	hide Meteor4 300
+    //
+	write "Em algum lugar do vazio\nentre as dimens‰es..." 223 0 700 200
+	write "Err... Eu ainda n∆o pensei\nnuma introduá∆o para o jogo..." 223 700 900 100
+#end

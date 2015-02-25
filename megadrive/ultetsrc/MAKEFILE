@@ -1,0 +1,61 @@
+.SUFFIXES : .x .o .c .s
+
+CC=hcc
+TOP=top
+AS=jas
+LD=ld
+RM=del
+PDAT=graphics\patchdat
+INC= -I..\\..\\include\\
+
+
+all     : j_n_r
+
+j_n_r: ultetris.o sega.o genesis.o utils.o \
+plyfield.o plf_aux.o plf_aux2.o plf_aux3.o plf_draw.o plf_ai.o \
+gamebkg.o fracbkg.o vs_reslt.o \
+psgsound.o menu.o options.o language.o credits.o \
+mission.o battle.o bttl_drw.o bttl_fx.o
+	$(LD) -b -g -v -o ultetris.bin -f objet.inc
+	$(PDAT) ultetris.bin ultrdat.dat
+
+clean:
+	$(RM) *.o
+	$(RM) ultetris.s
+	$(RM) ultetris.bin
+	$(RM) *.bak
+
+.c.o: 
+	@-echo "Making component -> $*.o"
+	$(CC) $(INC) $<
+	$(TOP) $*.s
+	$(AS) $*.s
+
+.s.o:
+	@-echo "Making component -> $*.o"
+	$(AS) $(CDIR)$*.s
+
+
+# dependencies -- DO NOT DELETE BELOW THIS LINE -- make depends on it.
+
+ultetris.o: ultetris.c
+sega.o    : sega.s
+genesis.o :	genesis.c
+utils.o   :	utils.c
+psgsound.o:	psgsound.c
+plyfield.o:	plyfield.c
+plf_aux.o :	plf_aux.c
+plf_aux2.o:	plf_aux2.c
+plf_draw.o:	plf_draw.c
+gamebkg.o :	gamebkg.c
+fracbkg.o :	fracbkg.c
+plf_ai.o  :	plf_ai.c
+menu.o	  : menu.c
+options.o : options.c
+language.o: language.c
+credits.o : credits.c
+mission.o : mission.c
+battle.o  : battle.c
+bttl_drw.o: bttl_drw.c
+bttl_fx.o : bttl_fx.c
+vs_reslt.o: vs_reslt.c

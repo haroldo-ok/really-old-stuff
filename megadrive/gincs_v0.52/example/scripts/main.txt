@@ -1,0 +1,15 @@
+:top
+#loadbkg zzz
+#playmusic fairlit2
+GINCS
+/i
+Graphical 
+Interactive 
+Novel 
+Creation 
+System
+/i
+Demonstration program
+/i
+#progcall start
+#goto top

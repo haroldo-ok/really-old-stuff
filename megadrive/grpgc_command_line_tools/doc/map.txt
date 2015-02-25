@@ -1,0 +1,36 @@
+#MAPSIZE <width> <height>
+   Sets the map size
+
+#COMPRESSION <compression-type>
+   Sets the map compression type. It could be NONE, RDC or RLE, but for now, only RDC is actually supported.
+
+#PLAYERPOS <X> <Y>
+   Sets the player's default position on the map
+
+#TILESET <number> <name>
+   Selects the specified tileset
+
+#PALETTE <number> <name>
+   Selects the specified palette
+
+#SPRITE <number> <name>
+   Selects the specified sprite
+
+#ACTOR <x> <y> <palette number> <sprite number> <script name>
+   Adds the specified actor
+
+#EXIT LEFT <map name> <dest x> <dest y>
+#EXIT RIGHT <map name> <dest x> <dest y>
+#EXIT TOP <map name> <dest x> <dest y>
+#EXIT BOTTOM <map name> <dest x> <dest y>
+#EXIT WEST <map name> <dest x> <dest y>
+#EXIT EAST <map name> <dest x> <dest y>
+#EXIT NORTH <map name> <dest x> <dest y>
+#EXIT SOUTH <map name> <dest x> <dest y>
+#EXIT <X> <Y> <width> <height> <map name> <dest x> <dest y>
+   Adds an exit to the map. The destination coordinates can be either numeric values, or the special values SAME or MIRROR.
+
+#MAP
+   <hexdata>
+#END
+   Sets the map data itself. It is presented as a sequence of hex numbers, ordered line by line, that is, if the map has a width of 32, the first 32 numbers correspond to the tiles of the first line, the next 32 to the second, and so on. Note that line breaks on the source will be ignored, that is, if you put 16 numbers on the first line of the source and 16 on the second, and the map has a width of 32, they'll still count as a single line on the map.

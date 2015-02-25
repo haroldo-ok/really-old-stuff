@@ -1,0 +1,24 @@
+#name "Sonic"
+#stand "SONIC_06.PCX" 20 10
+#defend "SONIC_06.PCX" 20 10
+#dodge "SONIC_06.PCX" 20 10
+#duck "SONIC_01.PCX" 20 40
+#jumpup "SONIC_06.PCX" 20 -8
+#jumpfall "SONIC_06.PCX" 20 -8
+#selface "SONIC_06.PCX" 20 20
+//#selicon "SONIC_06.PCX" 20 20
+#bgmusic "SONIC.MOD"
+#background "SONIC_BK.PCX"
+
+#attack "236P"
+    anim spin_attack
+#end
+
+#attack "236P"
+    anim spin_jump
+    midair
+#end
+
+#attack "214P"
+    anim super_tackle
+#end

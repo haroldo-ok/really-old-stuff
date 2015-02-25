@@ -1,0 +1,46 @@
+;Tileset attribute definition file
+; Format: <tile number> [attributes]
+; The attributes can tell from which directions the tile is
+; blocked (TOP, LEFT, BOTTOM, RIGHT, OPEN, SOLID, SIDES, UPDOWN),
+; which pallete it will use (PAL0, PAL1, PAL2, PAL3), or
+; if it will appear over or under the actors (FRONT, BACK)
+0 OPEN
+1 PAL1 FRONT TOP BOTTOM LEFT RIGHT
+2 SOLID
+3 SOLID
+4 SOLID
+5 OPEN
+6 OPEN
+7 SOLID
+8 SOLID
+9 SOLID
+10 SOLID
+11 OPEN
+12 OPEN
+13 OPEN
+14 OPEN
+15 OPEN
+16 OPEN
+17 OPEN
+18 OPEN
+19 OPEN
+20 OPEN
+21 OPEN
+22 OPEN
+23 OPEN
+24 OPEN
+25 OPEN
+26 OPEN
+27 OPEN
+28 OPEN
+29 SOLID
+30 OPEN
+31 SOLID
+32 SOLID
+33 SOLID
+34 SOLID
+35 SOLID
+36 SOLID
+37 SOLID
+38 SOLID
+39 SOLID

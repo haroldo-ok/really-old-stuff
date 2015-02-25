@@ -1,0 +1,180 @@
+error in zopint.c on line 22: expect ;
+error in zopint.c on line 22: ID not param zop_vm_init
+error in zopint.c on line 22: ID not param zop_menu_cnt
+error in zopint.c on line 22: ID not param zop_menu_dests
+error in zopint.c on line 22: ID not param zop_menu_ptrs
+error in zopint.c on line 22: ID not param zop_menu_text_ptr
+error in zopint.c on line 22: ID not param zop_menu_text_buf
+error in zopint.c on line 22: ID not param zop_text_ptr
+error in zopint.c on line 22: ID not param zop_text_buf
+error in zopint.c on line 22: ID not param zop_flags
+error in zopint.c on line 22: ID not param zop_instr_per_frame
+error in zopint.c on line 22: ID not param zop_display_menu
+error in zopint.c on line 22: ID not param zop_display_text
+error in zopint.c on line 22: ID not param zop_add_text_inc
+error in zopint.c on line 22: ID not param zop_add_text
+error in zopint.c on line 22: ID not param zop_get_flag0
+error in zopint.c on line 22: ID not param zop_set_flag0
+error in zopint.c on line 22: ID not param zop_get_flag
+error in zopint.c on line 22: ID not param zop_set_flag
+error in zopint.c on line 22: ID not param zop_clear_flags
+error in zopint.c on line 22: ID not param zop_exec_frame
+error in zopint.c on line 22: ID not param zop_exec_instruction
+error in zopint.c on line 22: ID not param zop_load_prog
+error in zopint.c on line 22: ID not param zop_vm_init
+error in zopint.c on line 22: ID not param zop_flags
+error in zopint.c on line 22: ID not param zop_instr_per_frame
+error in zopint.c on line 22: ID not param zop_prog_rec
+error in zopint.c on line 31: assume {
+error in zopint.c on line 31: undefined: zop_prog_rec
+error in zopint.c on line 32: assume }
+error in zopint.c on line 34: syntax (try skipping...)
+error in zopint.c on line 37: expect )
+error in zopint.c on line 37: assume {
+error in zopint.c on line 37: missing ;
+error in zopint.c on line 37: syntax (try skipping...)
+error in zopint.c on line 39: undefined: prog
+error in zopint.c on line 39: integral not allowed
+error in zopint.c on line 39: select non-struct
+error in zopint.c on line 39: pointer not allowed
+error in zopint.c on line 40: undefined: prog
+error in zopint.c on line 40: undefined: prog
+error in zopint.c on line 40: integral not allowed
+error in zopint.c on line 40: select non-struct
+error in zopint.c on line 40: integral not allowed
+error in zopint.c on line 40: select non-struct
+error in zopint.c on line 41: undefined: prog
+error in zopint.c on line 41: integral not allowed
+error in zopint.c on line 41: select non-struct
+error in zopint.c on line 45: expect ;
+error in zopint.c on line 45: ID not param zop_prog_rec
+error in zopint.c on line 45: assume {
+error in zopint.c on line 45: integral not allowed
+error in zopint.c on line 50: integral not allowed
+error in zopint.c on line 50: select non-struct
+error in zopint.c on line 50: integral not allowed
+error in zopint.c on line 54: integral not allowed
+error in zopint.c on line 54: select non-struct
+error in zopint.c on line 78: integral not allowed
+error in zopint.c on line 78: select non-struct
+error in zopint.c on line 79: integral not allowed
+error in zopint.c on line 79: select non-struct
+error in zopint.c on line 82: integral not allowed
+error in zopint.c on line 82: select non-struct
+error in zopint.c on line 89: undefined: zop_text_buf
+error in zopint.c on line 89: integral not allowed
+error in zopint.c on line 90: undefined: zop_text_ptr
+error in zopint.c on line 90: undefined: zop_text_buf
+error in zopint.c on line 94: integral not allowed
+error in zopint.c on line 94: select non-struct
+error in zopint.c on line 96: integral not allowed
+error in zopint.c on line 96: select non-struct
+error in zopint.c on line 112: undefined: zop_menu_cnt
+error in zopint.c on line 116: integral not allowed
+error in zopint.c on line 116: select non-struct
+error in zopint.c on line 116: integral not allowed
+error in zopint.c on line 117: integral not allowed
+error in zopint.c on line 117: select non-struct
+error in zopint.c on line 118: integral not allowed
+error in zopint.c on line 118: select non-struct
+error in zopint.c on line 118: integral not allowed
+error in zopint.c on line 119: integral not allowed
+error in zopint.c on line 119: select non-struct
+error in zopint.c on line 121: undefined: zop_menu_cnt
+error in zopint.c on line 122: undefined: zop_menu_text_ptr
+error in zopint.c on line 122: undefined: zop_menu_text_buf
+error in zopint.c on line 125: undefined: zop_menu_ptrs
+error in zopint.c on line 125: undefined: zop_menu_cnt
+error in zopint.c on line 125: undefined: zop_menu_text_ptr
+error in zopint.c on line 125: integral not allowed
+error in zopint.c on line 126: undefined: zop_menu_dests
+error in zopint.c on line 126: undefined: zop_menu_cnt
+error in zopint.c on line 126: integral not allowed
+error in zopint.c on line 128: integral not allowed
+error in zopint.c on line 128: select non-struct
+error in zopint.c on line 128: integral not allowed
+error in zopint.c on line 129: undefined: zop_menu_text_ptr
+error in zopint.c on line 129: integral not allowed
+error in zopint.c on line 129: integral not allowed
+error in zopint.c on line 129: select non-struct
+error in zopint.c on line 129: integral not allowed
+error in zopint.c on line 130: integral not allowed
+error in zopint.c on line 130: select non-struct
+error in zopint.c on line 131: undefined: zop_menu_text_ptr
+error in zopint.c on line 134: undefined: zop_menu_text_ptr
+error in zopint.c on line 134: integral not allowed
+error in zopint.c on line 135: undefined: zop_menu_text_ptr
+error in zopint.c on line 136: integral not allowed
+error in zopint.c on line 136: select non-struct
+error in zopint.c on line 138: undefined: zop_menu_cnt
+error in zopint.c on line 156: integral not allowed
+error in zopint.c on line 156: select non-struct
+error in zopint.c on line 156: integral not allowed
+error in zopint.c on line 177: integral not allowed
+error in zopint.c on line 177: select non-struct
+error in zopint.c on line 177: integral not allowed
+error in zopint.c on line 178: integral not allowed
+error in zopint.c on line 178: select non-struct
+error in zopint.c on line 179: integral not allowed
+error in zopint.c on line 179: select non-struct
+error in zopint.c on line 179: integral not allowed
+error in zopint.c on line 180: integral not allowed
+error in zopint.c on line 180: select non-struct
+error in zopint.c on line 195: integral not allowed
+error in zopint.c on line 195: select non-struct
+error in zopint.c on line 195: integral not allowed
+error in zopint.c on line 195: select non-struct
+error in zopint.c on line 203: integral not allowed
+error in zopint.c on line 203: select non-struct
+error in zopint.c on line 210: assume }
+error in zopint.c on line 211: assume {
+error in zopint.c on line 211: undefined: zop_prog_rec
+error in zopint.c on line 213: undefined: zop_instr_per_frame
+error in zopint.c on line 215: integral not allowed
+error in zopint.c on line 215: select non-struct
+error in zopint.c on line 219: integral not allowed
+error in zopint.c on line 219: select non-struct
+error in zopint.c on line 226: undefined: zop_text_buf
+error in zopint.c on line 226: integral not allowed
+error in zopint.c on line 236: assume }
+error in zopint.c on line 241: undefined: zop_flags
+error in zopint.c on line 241: integral not allowed
+error in zopint.c on line 249: bad 2nd decl of  zop_set_flag
+error in zopint.c on line 256: undefined: zop_flags
+error in zopint.c on line 256: integral not allowed
+warning in zopint.c on line 256: pointer types mismatch
+error in zopint.c on line 265: bad 2nd decl of  zop_get_flag
+error in zopint.c on line 271: undefined: zop_flags
+error in zopint.c on line 271: integral not allowed
+warning in zopint.c on line 271: pointer types mismatch
+error in zopint.c on line 277: bad 2nd decl of  zop_set_flag0
+error in zopint.c on line 279: undefined: zop_flags
+error in zopint.c on line 279: integral not allowed
+error in zopint.c on line 280: undefined: zop_flags
+error in zopint.c on line 280: integral not allowed
+error in zopint.c on line 284: bad 2nd decl of  zop_get_flag0
+error in zopint.c on line 285: undefined: zop_flags
+error in zopint.c on line 285: integral not allowed
+error in zopint.c on line 289: bad 2nd decl of  zop_add_text
+error in zopint.c on line 292: undefined: zop_text_ptr
+error in zopint.c on line 292: integral not allowed
+error in zopint.c on line 293: undefined: zop_text_ptr
+error in zopint.c on line 296: undefined: zop_text_ptr
+error in zopint.c on line 296: integral not allowed
+error in zopint.c on line 300: bad 2nd decl of  zop_add_text_inc
+error in zopint.c on line 303: undefined: zop_text_ptr
+error in zopint.c on line 303: integral not allowed
+error in zopint.c on line 304: undefined: zop_text_ptr
+error in zopint.c on line 307: undefined: zop_text_ptr
+error in zopint.c on line 307: integral not allowed
+error in zopint.c on line 311: bad 2nd decl of  zop_display_text
+error in zopint.c on line 313: undefined: zop_text_buf
+error in zopint.c on line 315: undefined: zop_text_buf
+error in zopint.c on line 315: integral not allowed
+error in zopint.c on line 316: undefined: zop_text_ptr
+error in zopint.c on line 316: undefined: zop_text_buf
+error in zopint.c on line 321: assume {
+error in zopint.c on line 321: undefined: zop_prog_rec
+error in zopint.c on line 322: assume }
+error in zopint.c on line 323: syntax (try skipping...)
+177 errors

@@ -1,0 +1,2 @@
+del *.map
+del *.til

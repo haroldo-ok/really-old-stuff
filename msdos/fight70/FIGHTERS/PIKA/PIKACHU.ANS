@@ -1,0 +1,114 @@
+#sprite Spr1
+    image "PIKA_02.PCX" (-20,-15)
+	colors 64
+#end
+
+#sprite Spr2
+    image "PIKA_03.PCX" (-20,0)
+    colors 64
+#end
+
+#anim Dummy
+#end
+
+#anim Main 150
+	stars xh 0 300 129 (0,0,0) 140 (255,255,255) 255 -5
+    place Spr1 (0,0) 0
+    path Spr1 100 0 (0,0) (128,0)
+    show Spr1 0
+    place Spr2 (128,0) 100
+    hide Spr1 100
+    show Spr2 100
+#end
+
+#sprite Front
+    image "PIKA_SHK.PCX" (0,0)
+    colors 32
+#end
+
+#sprite Angry_Eye
+    image "PIKA_EY1.PCX" (27,38)
+    colors 32 33
+#end
+
+#sprite Happy_Eye
+    image "PIKA_EY2.PCX" (26,38)
+    colors 32 33
+#end
+
+#sprite Shock1
+    image "PIKA_SK1.PCX" (-3,59)
+    colors 32 65
+#end
+
+#sprite Shock2
+    image "PIKA_SK2.PCX" (-4,60)
+    colors 32 65
+#end
+
+#sprite Shock3
+    image "PIKA_SK3.PCX" (-4,60)
+    colors 32 65
+#end
+
+#sprite Front2
+    image "PIKA_SK4.PCX" (-60,-85)
+    colors 64
+#end
+
+#sprite Fly_Kick
+    image "PIKA_05.PCX" (0,0)
+    colors 64
+#end
+
+#sprite Backg1
+    image "PIKA_BG1.PCX" (0,0)
+    colors 32 97
+#end
+
+#spriteseq Shock
+    frame Shock1 10
+    frame Shock2 10
+//    frame Shock3 10
+#end
+
+#sound Pikachu
+   rawsound "pikachu.raw"
+#end
+
+#anim ThShock 350
+   place Front (100,0)
+   place Happy_Eye (100,0)
+   place Angry_Eye (100,0)
+   place Shock (100,0)
+   //
+   background Backg1 250 0 (0,-40) (0,0)
+   //
+   show Front
+   //
+   show Happy_Eye 50
+   hide Happy_Eye 70
+   show Happy_Eye 90
+   hide Happy_Eye 110
+   show Angry_Eye 140
+   //
+   show Shock 150
+   playsound Pikachu 150
+   //
+   hide Shock 250
+   hide Angry_Eye 250
+   hide Front 250
+   //
+   show Front2 250
+   path Front2 300 250 (160,50) (160,0,-128)
+   flash 350 250 5 (0,0,0) (255,255,0) (255,255,128) (128,128,0)
+   //
+   write "Pikaaaa..." 97 70 250 160
+   write "Chuuuu..." 97 250 350 300
+#end
+
+#anim FlyingKick 100
+    stars yv 0 100 129 (0,0,0) 140 (255,255,255) 255 -5
+    show Fly_Kick
+    path Fly_Kick 100 0 (280,-60) (0,100)
+#end

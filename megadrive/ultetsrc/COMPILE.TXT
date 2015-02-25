@@ -1,0 +1,19 @@
+To compile Ultimate Tetris:
+   1. Go to the .\GRAPHICS subdirectory, and run MKALL.BAT
+      MKALL will convert all the .PCX files into maps/tilesets, so that they
+      can be used by SEGA Genesis.
+   2. Still on the .\GRAPHICS subdirectory, run MKDAT.BAT
+      It will take all tilesets, maps, sounds, etc., and convert them all to
+      a PATCHDAT resource file (ULTRDAT.DAT), and the correspondent .H file
+      (ULTRDAT.H)
+   3. Return to the main source directory and run MAKE (please, use either
+      Borland MAKE or GNU MAKE, not the one that comes with SGCC). It will
+      compile all the code, link it, and then insert the graphics/sound/map
+      data to the ROM by using PATCHDAT.
+   4. Open the rom with Genecyst (you can get it on any good emulation site),
+      then choose "File->Fix ROM CheckSum". If you don't have Genecyst, find
+      some utility that can fix the CheckSum of SEGA Genesis' ROMs, and use
+      it.
+   5. Well, now your ROM (ULTETRIS.BIN) should run on any SEGA Genesis
+      emulator.
+If you have any questions, E-Mail me at haroldoop@ieg.com.br

@@ -1,0 +1,241 @@
+sub fastcall UpdateSprites()
+	asm
+		; Since it's a fastcall function, you can do that.
+		jp UpdateSprites ; Jumps directly to the actual asm routine
+	end asm
+end sub
+
+sub fastcall WaitForVBlankNoInt()
+	asm
+		; Since it's a fastcall function, you can do that.
+		jp WaitForVBlankNoInt ; Jumps directly to the actual asm routine
+	end asm
+end sub
+
+sub fastcall SetSprite(num as UByte, x as UByte, y as UByte, tile as UByte)
+	asm
+		exx
+		pop hl ; ret addr
+		exx 
+
+		ld d, 0
+		ld e, a		; de = num
+		pop bc		; b = x
+		
+		ld hl, hw_sprites_y
+		add hl, de
+		pop af
+		ld (hl), a	; hw_sprites_y[num] = y
+
+		ld hl, hw_sprites_xc		
+		add hl, de
+		add hl, de
+		ld (hl), b	; hw_sprites_xc[num << 1] = x
+		
+		inc hl
+		pop af
+		ld (hl), a	; hw_sprites_xc[(num << 1) + 1] = tile
+
+		exx
+		push hl ; stores ret addr back
+		exx
+	end asm
+end sub
+
+const joyUpMask    as UByte = 1
+const joyDownMask  as UByte = 2
+const joyLeftMask  as UByte = 4
+const joyRightMask as UByte = 8
+const joyFireAMask as UByte = 16
+const joyFireBMask as UByte = 32
+
+function fastcall ReadJoypad1() as UByte
+	asm
+		in	a, ($dc)	; Reads joystick 1
+		cpl			; Inverts all bits
+	end asm
+end function
+
+function fastcall ReadJoypad2() as UByte
+	asm
+		in	a, ($dc)	; Reads UP and DOWN
+		cpl			; Inverts all bits
+		rla
+		rla
+		rla			; Puts them into the 2 lower bits
+		and	$03		; Masks them
+		ld	l, a
+		in	a, ($dd)	; Reads the remaining bits
+		cpl			; Inverts all bits
+		add	a, a
+		add	a, a		; Shifts them to the correct position
+		or	l		; Groups them with the first two
+	end asm
+end function
+
+function fastcall AndW(A as UInteger, B as UInteger) as UInteger
+	asm
+		; hl starts loaded with A	
+		pop bc ; ret addr
+		
+		pop de ; de = B
+		
+		ld a, l
+		and e
+		ld l, a ; l = l & e
+		
+		ld a, h
+		and d
+		ld h, a ; h = h & d
+		
+		push bc ; stores ret addr back
+	end asm
+end function
+
+function fastcall ResourceAddr(id as UInteger) as UInteger
+	asm
+		ld de, resource_pointer_table
+		add hl, de		; hl now points to the table entry
+		
+		ld a, (hl)		
+		ld de, $FFFF
+		ld (de), a		; Selects page 2 ROM bank
+		
+		inc hl
+		ld e, (hl)
+		inc hl
+		ld d, (hl)		; Loads offset into de
+			
+		ld l, e
+		ld a, d
+		and $3f
+		or $80			; Recomputes the address as pertaining to the bank 2 area
+		ld h, a		
+		
+		; Bank is set, and hl is pointing to the correct resource
+	end asm
+end function
+
+sub fastcall LoadPalette(addr as UInteger, count as UByte, firstColor as UByte)
+	asm
+		exx
+		pop hl ; ret addr
+		exx
+		
+		pop bc	; b = count
+		pop de	; d = first color
+		ld c, d
+		
+		call LoadPalette
+
+		exx
+		push hl ; stores ret addr back
+		exx
+	end asm
+end sub
+
+sub fastcall LoadTiles(firstTile as UInteger, sourceAddr as UInteger, tileCount as UInteger, bpp as UByte)
+	asm
+		exx
+		pop hl ; ret addr
+		exx
+		
+		; hl = tile number to start at (already set)
+		pop ix		; ix = location of tile data
+		pop bc		; bc = No. of tiles to load
+		pop de		; d  = bits per pixel		
+		
+		call LoadTiles
+
+		exx
+		push hl ; stores ret addr back
+		exx
+	end asm
+end sub
+
+sub fastcall SetBkgData(sourceAddr as UInteger, x as UByte, y as UByte, w as UByte, h as UByte)
+	asm
+		exx
+		pop hl ; ret addr
+		exx	
+		
+		; Loads registers
+		
+		pop bc
+		ld e, b		; e = x
+		pop bc
+		ld d, b		; d = y
+		
+		pop bc
+		ld a, b		
+		pop bc		; b = height
+		ld c, a		; c = width
+
+		; Computes bkg map VRAM starting address
+		
+		push	hl	
+		ld	l, d
+		ld	h, 0
+		add	hl, hl
+		add	hl, hl
+		add	hl, hl
+		add	hl, hl
+		add	hl, hl		; HL = Y*32
+		ld	d, 0
+		add	hl, de		; HL = (Y*32) + X
+		add	hl, hl		; HL = ((Y*32) + X) * 2
+		ld	de, NameTableAddress
+		add	hl, de
+		ld	d, h
+		ld	e, l
+		pop	hl
+		
+		; Loops through the rows
+		__SetBkgData__lineLoop:
+			push	bc
+
+				push	hl
+				ld	h, d
+				ld	l, e
+				call	VRAMToHL	; Set VRAM write address
+				pop	hl
+
+				push	af
+				__SetBkgData__colLoop:
+					ld	a, (hl)
+					out	($be), a	; Character number
+					inc	hl
+					ld	a, (hl)
+					out	($be), a	; Attribute number
+					inc	hl
+
+					dec	c
+					jp	nz, __SetBkgData__colLoop; Repeat until c is zero
+				pop	af
+
+			pop	bc
+
+			; Calculates next VRAM addr
+			ld	a, e
+			add	a, 64
+			jp	nc, __SetBkgData__notCarry
+			inc	d	
+		__SetBkgData__notCarry:
+			ld	e, a
+
+			dec	b
+			jp	nz, __SetBkgData__lineLoop	; Loops until all lines are drawn
+
+		exx
+		push hl ; stores ret addr back
+		exx
+	end asm
+end sub
+
+sub fastcall ScrollY(y as UByte)
+	asm
+        out	($bf),a		; Output to VDP register 9 (Y Scroll)
+        ld	a,$89
+        out	($bf),a
+	end asm		
+end sub

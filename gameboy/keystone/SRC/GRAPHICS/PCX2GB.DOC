@@ -1,0 +1,160 @@
+
+ Advanced PCX to GameBoy converter v2.14 - Copyright (C) 1997,1998 MegaMan_X
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                       ---===### Freeware ###===---
+
+   This is yet another PCX to GameBoy Tiles converter program. But this one
+ has something that the others don't (as far as I know anyway!) It lets you
+ control the "contrast" of the 4 shades of grey in the converting process.
+
+ For a list of available parameters, just type "PCX2GB" alone on the command
+ line.
+
+ ----------------------------------------------------------------------------
+
+ Versions infos
+ ~~~~~~~~~~~~~~
+
+ v2.14
+ ~~~~~
+ - Small bugfix for GBDK output format. Now has commas at the end of the
+   lines, and close the "}" at the end of the last line (instead of alone
+   on a new line). Thanks to Andrew March and someone else (I can't remember
+   his name) for this bug report.
+ - This could be the last version (or near-last) for this converter, since
+   I'm working on my new Win32 application that has his own grafx converter
+   built-in (based on my PCX2GB). Don't worry (yet), this DOS program is
+   far superior (in both converter quality and SPEED) to the Win32 grafx
+   converter (for now at least).
+
+ v2.13
+ ~~~~~
+ - The saved tiles were inverted when compared to the default GB power-up
+   shades. Thanks to Jeff Frohwein for the info.
+
+ v2.12
+ ~~~~~
+ - Thanks to Luc Van den Borre, I fixed the GBDK output format. If there's
+   any problem, please email me!
+ - even better dithering patterns, thanks to Jeff Frohwein! (Please read the
+   doc for the new dithering key!)
+
+ v2.11
+ ~~~~~
+ - Stupid bugfix release. People kept bugging me for a release, so I released
+   it without checking where I was in my coding. I was in the process of
+   adding RGBDS, TASM and GBDK support but I wasn't finished. That's why the
+   program crash when trying to output the TileMap file in any other format
+   than binary. Should be ok now.
+ - Now supports (kinda) GBDK output. I'm sure the format isn't correct, so
+   please check it out and send whatever format/header/etc is required.
+   Thanks.
+
+ ----------------------------------------------------------------------------
+
+ More infos
+ ~~~~~~~~~~
+ Source:
+ The PCX image must be 320x200 or less, and must be 8-bit/pixel (256 colors)
+ or "Zsoft Paintbrush, Sub type: version 5" if you're into technical terms.
+
+ Target/Map:
+ My PCX2GB converter can output in four modes:
+ - Binary (pure binary data with no headers)
+ - RGBDS (RedNex GameBoy Development System)
+ - TASM (Table Assembler)
+ - GBDK (GameBoy Development Kit (C compiler))
+
+ Target is the tiles data file, map is the tile map data file
+ (if using "match" mode).
+
+ ----------------------------------------------------------------------------
+
+ Instructions (or "How in the hell does this thing works anyway?"):
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ After the PCX is loaded, just follow theses (simple) steps:
+
+ 1 - you have your PCX image on-screen, with a glowing selection square in
+     the upper-left corner. This is what is used to select exactly which part
+     of the PCX image you want to convert into tiles. The default size of this
+     selection square is 160x144 (20x18 tiles, same size as a whole GB screen).
+     - To move the square, use the arrow keys.
+     - To change the square's size, use [Home]/[End] for horizontal dec/inc
+       and [PageUp]/[PageDown] for vertical dec/inc (the selection square
+       size changes in 8 pixels steps, the same size as a tile).
+     - Please note the border of the square itself is part of the selection
+       (inclusive!).
+
+ 2 - When you're done selecting the part you want to convert, press the
+     [Enter] key. This will cut'n paste your selection in the upper-left
+     corner of your screen.
+
+ 3 - Now you have your selection cutted out, but it's still in 256-colors.
+     Press the [Enter] key again to convert to 64-shades greyscale. This is
+     a pretty standard conversion process (I think) and no better results
+     could be achieved without using dithering.
+
+ 4 - Now you have your selection in 64 shades of black & white, and need
+     to convert it to the GameBoy 4-shades greyscale. You have three ways
+     to do this:
+     - the [Enter] key will convert without dithering (which is the worst
+       choice for most pictures)
+     - the [D] key will use the old dithering method (v2.11) which is
+       equivalent to 7 shades (for the converter)
+     - the [X] key will use the all-new dithering method which I call
+       "Xtra Dithering" (hence the "x" key) which is equivalent (believe it
+       or not) to 13 shades! (for the converter)
+     I kept the old dithering routine intact, for thoses who don't like too
+     much dithering or don't like the new dithering.
+
+ 5 - There you have it. This is what most other converters will give you (if
+     using no dithering!). But with the Advanced PCX to GameBoy Converter,
+     this is not over yet! The real power lies in the dithering and in the
+     following process:
+
+     Here's the keys:
+     [1]/[2] : Theses control the limits of GB colors 0 and 1.
+     [3]/[4] : Theses control the limits of GB colors 1 and 2.
+     [5]/[6] : Theses control the limits of GB colors 2 and 3.
+     (keys [1],[3] and [5] are the "-" or "decrement" keys)
+     (keys [2],[4] and [6] are the "+" or "increment" keys)
+
+    It's hard to describe in text, so just try it out and you'll see exactly
+    what I'm trying to explain here.
+
+6 - After you're satisfied with the results, press the [Enter] key once more
+    to convert the result into GB data and save the result.
+
+
+ The tiles are saved from 0 to "number of tiles-1" (1st to last tile).
+
+ There's currently a limit of 384 tiles, and the program will stop if there's
+ more than that.
+
+ Well that about sums it up. If there's anything, please contact me:
+ MegaMan_X@digitalparadise.cgocable.ca
+
+ Also check out my website:
+ http://digitalparadise.cgocable.ca/MegaMan_X/
+
+ Look in the "Projects" stage (or "GameBoy" if "Projects" doesn't exist
+ anymore).
+
+ The following programs are available for free at my website:
+ - Advanced GameBoy IDE (Borland-like IDE and x86-like opcodes
+                         editor/assembler for GameBoy)
+ - MegaMan_X's GameBoy Wave Converter - converts raw unsigned 8-bit mono
+   audio files to GameBoy wave format (4-bit)
+ - Advanced PCX2GB converter - My most popular utility so far. Some people
+   call it "the best PCX to GameBoy converter ever made". And if you keep
+   sending me your ideas, it'll stay the best too!
+
+ - Be sure to check out my all-new coding utility (called "MegaMan_X's
+   GameBoy Game Maker" for now - if you have a better name please send it!)
+   This program will allow almost anybody to code games for GameBoy without
+   any C,Pascal,Basic or assembler coding! Easy to learn, extremely fast
+   coding!
+
+ Have fun!

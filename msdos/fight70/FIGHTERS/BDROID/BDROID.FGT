@@ -1,0 +1,38 @@
+#name "Battle Bot"
+#stand "BOTSTND.PCX" 20 20
+#defend "BOTDFND.PCX" 20 20
+#dodge "BOTRUN.PCX" 20 20
+#duck "BOTDUCK.PCX" 20 40
+#jumpup "BOTJMP1.PCX" 20 -4
+#jumpfall "BOTJMP2.PCX" 0 -4
+#hit "BOTHIT.PCX" 20 20
+#selface "BOT_SEL.PCX" 20 20
+#selicon "BOT_ICON.PCX" 20 20
+#bgmusic "BDROID.MOD"
+#attack "236P"
+    anim FireBall1
+    damage 20
+    power 100
+#end
+#attack "46P"
+    anim S_Tackle
+    damage 30
+    power 150
+#end
+#attack "P"
+    anim Punch
+    damage 10
+    power 0
+#end
+#attack "K"
+    anim Kick
+    damage 10
+    power 0
+#end
+#attack "K"
+    anim Fly_Kick
+    damage 15
+    power 0
+    aerial
+    midair
+#end

@@ -1,0 +1,145 @@
+/*  
+  fixed ship_angle;
+  fixed ship_x,ship_y;
+*/
+//  set_bkg_data(0x00, 0xFF, tiledata);
+//  set_bkg_tiles(0, 0, 20, 18, tilemap);
+
+//  WX_REG = MAXWNDPOSX;
+//  WY_REG = MAXWNDPOSY;
+
+//  set_sprite_data(0x00, 0x20, ply_sprite); //Jogador
+//  set_sprite_prop(0, 0x00);
+//  set_sprite_prop(1, 0x00);
+//  set_sprite_prop(2, 0x00);
+//  set_sprite_prop(3, 0x00);
+//  set_sprite_tile(spr,frame);
+//  move_sprite(spr, x, y);
+
+//  set_sprite_prop(0, 0x00);
+//  set_sprite_prop(1, 0x00);
+//  set_sprite_prop(2, 0x00);
+//  set_sprite_prop(3, 0x00);
+//  set_sprite_prop(4, 0x00);
+//  set_sprite_prop(5, 0x00);
+//  set_sprite_prop(6, 0x00);
+//  set_sprite_prop(7, 0x00);
+//  set_sprite_prop(8, 0x00);
+
+//  set_sprite_tile(0,0);
+//  set_sprite_tile(1,1);
+//  set_sprite_tile(2,2);
+//  set_sprite_tile(3,15);
+//  set_sprite_tile(4,16);
+//  set_sprite_tile(5,17);
+//  set_sprite_tile(6,30);
+//  set_sprite_tile(7,31);
+//  set_sprite_tile(8,32);
+
+//  move_sprite(0, 16, 16);
+//  move_sprite(1, 24, 16);
+//  move_sprite(2, 32, 16);
+//  move_sprite(3, 16, 24);
+//  move_sprite(4, 24, 24);
+//  move_sprite(5, 32, 24);
+//  move_sprite(6, 16, 32);
+//  move_sprite(7, 24, 32);
+//  move_sprite(8, 32, 32);
+
+//  add_VBL(vbl);
+//  add_LCD(hbl);
+
+//  STAT_REG = 0x08;	
+
+//  set_interrupts(VBL_IFLAG | LCD_IFLAG);
+
+//       draw_ship(ship1.ship_x.b.h, ship1.ship_y.b.h, &ship1);
+//       draw_ship(ship2.ship_x.b.h, ship2.ship_y.b.h, &ship2);
+
+  if(joy & J_UP){
+//     ship->speed_x.w -= _COS(ship->angle.b.h+4) >> 4;
+//     ship->speed_y.w += _SIN(ship->angle.b.h+4) >> 4;
+     accelerate_ship(ship,ship->angle.b.h+4,0x0F);
+  }
+  if(joy & J_DOWN){
+//     ship->speed_x.w += _COS(ship->angle.b.h+4) >> 4;
+//     ship->speed_y.w -= _SIN(ship->angle.b.h+4) >> 4;
+     accelerate_ship(ship,ship->angle.b.h+4,-0x0F);
+  }
+
+   WORD A,B;
+   fixed C,D;
+   A = abs(ship->speed_x.b.h);
+   B = abs(ship->speed_y.b.h);
+   C.w = ship->max_speed.b.h;
+   D.w = (A*A)+(B*B);
+   //
+   if(D.w > (C.w*C.w)){
+      D.w = _SQRT(D.b.h);
+      if(D.b.h){
+         A = ship->speed_x.w;
+         B = ship->speed_y.w;
+         ship->speed_x.b.h = A * C.w / D.b.h;
+         ship->speed_y.b.h = B * C.w / D.b.h;
+      }
+   }
+
+   WORD A,B,C;
+   //
+   A = ship->speed_x.w;
+   B = ship->speed_y.w;
+   C = ship->max_speed.w;
+   if((labs(A) + labs(B)) > C){ //NÆo ‚ muito exato, mas ‚ r pido.
+      while(1);
+      ship->speed_x.w = 0;
+      ship->speed_y.w = 0;
+   }
+
+void limit_ship_speed(ship_rec *ship){
+}
+
+void accelerate_ship(ship_rec *ship, WORD accel){
+  ship->speed_x.w -= (_COS(ship->angle.b.h+4)*accel) >> 8;
+  ship->speed_y.w += (_SIN(ship->angle.b.h+4)*accel) >> 8;
+  ship->ship_accel.w = accel;
+  limit_ship_speed(ship);
+}
+
+/*
+   ship->speed_x.w = -(WORD)((_COS(ship->angle.b.h+4+dir) >> 4)*ship->max_speed.w) >> 5;
+   ship->speed_y.w =  (WORD)((_SIN(ship->angle.b.h+4+dir) >> 4)*ship->max_speed.w) >> 5;
+*/
+
+      if (!small_ships){
+         X = (BYTE)ship[i].ship_x.b.h;
+//         X -= (BYTE)bkg_x.b.h;
+      }else{
+         X = (BYTE)ship[i].ship_x.b.h >> 1;
+//         X -= (BYTE)bkg_x.b.h >> 1;
+      }
+      X += 80;
+      //
+      if(!small_ships){
+         Y = (BYTE)ship[i].ship_y.b.h;
+//         Y -= (BYTE)bkg_y.b.h;
+      }else{
+         Y = (BYTE)ship[i].ship_y.b.h >> 1;
+//         Y -= (BYTE)bkg_y.b.h >> 1;
+      }
+      Y += 72;
+
+   //
+   if(ship[0].ship_x.w < ship[1].ship_x.w){
+      A = ship[1].ship_x.w - ship[0].ship_x.w + 0x7F00;
+   }else{
+      A = ship[0].ship_x.w - ship[1].ship_x.w + 0x7F00;
+   }
+   //
+   if(ship[0].ship_y.w < ship[1].ship_y.w){
+      B = ship[1].ship_y.w - ship[0].ship_y.w + 0x7F00;
+   }else{
+      B = ship[0].ship_y.w - ship[1].ship_y.w + 0x7F00;
+   }
+   //
+   small_ships = (A > (85*0x100)) || (B > (85*0x100));
+   //

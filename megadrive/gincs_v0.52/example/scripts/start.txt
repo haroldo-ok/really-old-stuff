@@ -1,0 +1,81 @@
+#playmusic midlalta
+
+' *** Building ***
+
+:end_of_road
+#loadbkg sprghous
+"At End Of Road"
+You are standing at the end of a road before a small brick building.
+Around you is a forest.
+A small stream flows out of the building and down a gully.
+!inside_building;Enter the building
+!river;Follow the river
+/i
+
+:inside_building
+"Inside Building"
+You are inside a building, a well house for a large spring.
+#if not fl0001 There are some keys on the ground here.
+#if not fl0001 !getkeys;Get the keys
+!end_of_road;Leave building
+/i
+:getkeys
+#set fl0001
+Keys taken.
+/i
+#goto inside_building
+
+' *** River ***
+
+:river
+#loadbkg river
+"In A Valley"
+You are in a valley in the forest beside a stream tumbling along a rocky bed.
+!end_of_road;Return to the building
+!grate;Follow the river
+/i
+
+' *** Cave entrance ***
+
+:grate
+#loadbkg cventr
+"Cave Entrance"
+You are in a 20-foot depression floored with bare dirt.
+Set into the dirt is a strong steel grate mounted in concrete.
+A dry streambed leads into the depression.
+
+#if fl0002 #goto grate_unlocked
+#if fl0001 #goto grate_haskey
+!grate_locked;Open grate
+#goto grate_menu_end
+
+:grate_haskey
+!grate_unlock;Unlock grate
+#goto grate_menu_end
+
+:grate_unlocked
+The grate is open.
+!inside_cave;Enter the cave
+
+:grate_menu_end
+!river;Return to river
+/i
+
+:grate_locked
+The grate is locked.
+/i
+#goto grate
+
+:grate_unlock
+You used the keys to unlock the grate.
+#set fl0002
+/i
+#goto grate
+
+' *** The End ***
+
+:inside_cave
+
+#progcall theend
+
+#return

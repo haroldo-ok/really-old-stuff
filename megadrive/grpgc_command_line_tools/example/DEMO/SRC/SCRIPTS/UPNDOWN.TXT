@@ -1,0 +1,8 @@
+:top
+/n/n/n/n/s/s/s/s
+#goto top
+
+:touch
+Outta' my way!
+/i
+#goto top

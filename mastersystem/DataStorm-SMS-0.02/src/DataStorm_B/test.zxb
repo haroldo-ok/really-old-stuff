@@ -1,0 +1,498 @@
+#include "hardware.zxi"
+#include "sprite.zxi"
+#include "random.zxi"
+#include "test.zxi"
+
+dim joy as UByte
+dim frameTimer as UInteger
+
+const VisibleMinX	as UByte = 16
+const VisibleMaxX	as UByte = 256 - 16
+const VisibleMinY	as UByte = 0
+const VisibleMaxY	as UByte = 192
+
+const VisibleTilesMaxY	as UByte = (VisibleMaxY - VisibleMinY) / 16
+
+
+const BackgroundCharMaxY	as UByte = 28
+const BackgroundPixelMaxY	as UByte = BackgroundCharMaxY * 8
+
+
+const ActorMinX			as UByte = 8
+const ActorMaxX 		as UByte = 256 - 8
+const ActorFrameTile	as UByte = 4
+const ActorDirTile		as UByte = 8
+const ActorTileShift	as UByte = 4
+
+
+const ScoreBaseTile		as UInteger = 0
+const ScoreTileCount	as UByte = 20
+
+
+const LaneCount			as UByte = 7
+const LaneCharHeight	as UByte = 3
+const LaneTop			as UByte = 1
+const LaneBottom		as UByte = LaneTop + LaneCount * LaneCharHeight
+const LanePixelTopLimit	as UByte = LaneTop * 8 + 8
+const LanePixelHeight	as UByte = LaneCharHeight * 8
+const LaneBaseTile		as UByte = $B0
+
+const PlayerMinY		as UByte = LanePixelTopLimit
+const PlayerCenterX		as UByte = 128
+
+const PlayerWidth	as UByte = 16
+const PlayerHeight	as UByte = 16
+
+const PlayerBaseTile	as UByte = 16
+
+dim playerX, playerY, playerFrame as UByte
+dim playerFireDelay as UByte
+dim playerCurrentLane, playerTargetLane as UByte
+dim playerTargetY as UByte
+dim playerLookingLeft as UByte
+
+
+const ShotMemSize	as UByte = 2
+const ShotMemShift	as UByte = 1
+const ShotXOfs		as UByte = 0
+const ShotFlagOfs	as UByte = 1
+
+const ShotFlagLeft	as UByte = 1
+const ShotFlagRight	as UByte = 2
+
+const ShotBaseTile	as UByte = 32
+
+dim shots(1 to LaneCount * ShotMemSize) as UByte
+
+
+const EnemyMemSize	as UByte = 4
+const EnemyMemShift	as UByte = 2
+const EnemyXOfs		as UByte = 0
+const EnemySpdOfs	as UByte = 1
+const EnemyTypeOfs	as UByte = 2
+const EnemyTimerOfs	as UByte = 3
+
+const EnemyBaseTile	as UByte = 48
+
+const EnemyTypeMask		as UByte = 7
+const EnemyTypeSlow		as UByte = 0
+const EnemyTypeMedium	as UByte = 1
+const EnemyTypeFast		as UByte = 2
+const EnemyTypePellet	as UByte = 3
+const EnemyTypeBall		as UByte = 4
+const EnemyTypeArrow	as UByte = 5
+const EnemyTypeTank		as UByte = 6
+const EnemyTypePhantom	as UByte = 7
+
+
+dim enemies(1 to LaneCount * EnemyMemSize) as UByte
+
+
+asm
+    ld a,%11100110
+;          |||| |`- Zoomed sprites -> 16x16 pixels
+;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
+;          |||`---- 30 row/240 line mode
+;          ||`----- 28 row/224 line mode
+;          |`------ VBlank interrupts
+;          `------- Enable display
+    out ($bf),a
+    ld a,$81
+    out ($bf),a
+end asm
+
+
+sub DrawShip(x as UByte, y as UByte, baseTile as UByte, facingRight as UByte)
+	if frameTimer band $10 then
+		baseTile = baseTile + ActorFrameTile
+	end if
+
+	if facingRight then
+		baseTile = baseTile + ActorDirTile
+	end if
+	
+	AddDoubleSprite(x, y, baseTile)
+end sub
+
+
+sub DrawPlayerShip()
+	DrawShip(playerX, playerY, PlayerBaseTile, not playerLookingLeft)
+end sub
+
+sub DrawLanes()
+	dim i as UByte
+	dim p, p2 as UInteger
+	dim y as UInteger
+	dim buffer(0 to 31) as UInteger
+	
+	p = @buffer
+	p2 = p + 62
+
+	' Yeah, I'm too lazy to draw an actual background.
+	for i = 0 to 4
+		poke UInteger p, LaneBaseTile
+		poke UInteger p2, LaneBaseTile
+		p = p + 2
+		p2 = p2 - 2
+	next
+	
+	for i = 4 to 8
+		poke UInteger p, LaneBaseTile + 1
+		poke UInteger p2, LaneBaseTile + 1
+		p = p + 2
+		p2 = p2 - 2
+	next
+	
+	for i = 9 to 15
+		poke UInteger p, LaneBaseTile + 2
+		poke UInteger p2, LaneBaseTile + 2
+		p = p + 2
+		p2 = p2 - 2
+	next
+	
+	SetBkgData(@buffer, 0, LaneTop, 32, 1)
+	SetBkgData(@buffer, 0, LaneBottom, 32, 1)
+	
+	poke UInteger @buffer + 28, LaneBaseTile + 3
+	poke UInteger @buffer + 30, 0
+	poke UInteger @buffer + 32, 0
+	poke UInteger @buffer + 34, LaneBaseTile + 4
+	
+	y = LaneTop + LaneCharHeight
+	for i = 2 to LaneCount
+		SetBkgData(@buffer, 0, y, 32, 1)		
+		y = y + LaneCharHeight
+	next
+end sub
+
+
+function fastcall LaneCoord(laneNumber as UInteger) as UByte
+	asm			
+		ld de, LaneCoords
+		add hl, de			; HL now points to the corresponding element on the table
+		ld a, (hl)
+	end asm
+end function
+
+sub ChangeLane()
+	playerTargetY = LaneCoord(playerTargetLane) + LanePixelTopLimit
+end sub
+
+
+sub InitShots()
+	dim i as UByte
+	dim p as UInteger
+	
+	p = @shots
+	for i = 0 to LaneCount - 1
+		poke p + ShotFlagOfs, 0
+	next
+end sub
+
+function ShotAddr(laneNumber as UByte) as UInteger
+	return @shots + (laneNumber << ShotMemShift)
+end function
+
+sub DrawShot(baseAddr as UInteger, y as UByte)
+	if peek(baseAddr + ShotFlagOfs) then
+		DrawShip(peek(baseAddr + ShotXOfs), y, ShotBaseTile, peek(baseAddr + ShotFlagOfs) = ShotFlagRight)
+	end if
+end sub
+
+sub DrawShots()
+	dim i, y as UByte
+	dim p as UInteger
+	
+	p = @shots
+	y = LanePixelTopLimit
+	for i = 1 to LaneCount
+		DrawShot(p, y)
+		y = y + LanePixelHeight
+		p = p + ShotMemSize
+	next
+end sub
+
+sub MoveShot(baseAddr as UInteger)
+	dim x, flags as UByte
+
+	x = peek(baseAddr + ShotXOfs)
+	flags = peek(baseAddr + ShotFlagOfs)
+	if flags then
+		if flags = ShotFlagLeft then
+			x = x - 6
+		else
+			x = x + 6
+		end if
+		
+		if (x <= ActorMinX) or (x >= ActorMaxX) then
+			poke baseAddr + ShotFlagOfs, 0
+		end if
+		
+		poke baseAddr + ShotXOfs, x
+	end if
+end sub
+
+sub MoveShots()
+	dim i as UByte
+	dim p as UInteger
+	
+	p = @shots
+	for i = 1 to LaneCount
+		MoveShot(p)
+		p = p + ShotMemSize
+	next
+end sub
+
+sub Fire()
+	dim p as UInteger
+	
+	p = ShotAddr(playerCurrentLane)
+	if peek(p + ShotFlagOfs) = 0 then
+		poke p + ShotXOfs, PlayerCenterX
+	
+		if playerLookingLeft then
+			poke p + ShotFlagOfs, ShotFlagLeft
+		else
+			poke p + ShotFlagOfs, ShotFlagRight
+		end if
+	end if
+end sub
+
+
+sub InitEnemies()
+	dim i as UByte
+	dim p as UInteger
+	
+	p = @enemies
+	for i = 0 to LaneCount - 1
+		poke p + EnemySpdOfs, 0
+		p = p + EnemyMemSize
+	next
+end sub
+
+sub DrawEnemy(baseAddr as UInteger, y as UByte)
+'	if peek(baseAddr + ShotFlagOfs) then
+'		AddDoubleSprite(peek(baseAddr + ShotXOfs), y, ShotBaseTile)
+'	end if	
+	if peek(baseAddr + EnemySpdOfs) then
+		DrawShip(peek(baseAddr + EnemyXOfs), y, EnemyBaseTile + (peek(baseAddr + EnemyTypeOfs) << ActorTileShift), peek(Byte, baseAddr + EnemySpdOfs) > 0)
+	end if
+end sub
+
+sub DrawEnemies()
+	dim i, y as UByte
+	dim p as UInteger
+	
+	p = @enemies
+	y = LanePixelTopLimit
+	for i = 0 to LaneCount - 1
+		DrawEnemy(p, y)
+		y = y + LanePixelHeight
+		p = p + EnemyMemSize
+	next
+end sub
+
+sub CollideEnemy(enemyAddr as UInteger, lane as UByte)
+	dim shotAddr as UInteger
+	dim shotX, enemyX as UInteger
+	dim enemyType, shotFlag as UByte
+	
+	enemyType = peek(enemyAddr + EnemyTypeOfs)
+	if enemyType = EnemyTypePhantom then
+		' Phantom ships are invulnerable.
+		return
+	end if
+
+	shotAddr = ShotAddr(lane)
+	shotFlag = peek(shotAddr + ShotFlagOfs)
+	if shotFlag then
+		shotX = peek(shotAddr + ShotXOfs)
+		enemyX = peek(enemyAddr + EnemyXOfs)
+		
+		if (shotX - enemyX <= 16) or (enemyX - shotX <= 16) then
+			poke shotAddr + ShotFlagOfs, 0
+			if enemyType = EnemyTypeTank then
+				' Tanks can only be hit from the back
+				if peek(Byte, enemyAddr + EnemySpdOfs) < 0 then
+					if shotFlag = ShotFlagLeft then
+						' Both facing left? Blam!
+						poke enemyAddr + EnemySpdOfs, 0
+					end if
+				else
+					if shotFlag = ShotFlagRight then
+						' Both facing right? Blam!
+						poke enemyAddr + EnemySpdOfs, 0
+					end if
+				end if
+			else
+				poke enemyAddr + EnemySpdOfs, 0
+			end if
+		end if
+	end if
+end sub
+
+sub MoveEnemies()
+	dim i as UByte
+	dim x, type as UByte
+	dim spd, timer as Byte
+	dim p as UInteger
+	
+	p = @enemies
+	for i = 0 to LaneCount - 1
+		x = peek(p + EnemyXOfs)
+		spd = peek(p + EnemySpdOfs)
+		type = peek(p + EnemyTypeOfs)
+		timer = peek(p + EnemyTimerOfs)
+		
+		if spd = 0 then
+			if (Random() band $1F) = 1 then
+				' Spawns a new enemy
+			
+				if Random() band 1 then
+					x = ActorMinX + 1
+					spd = 12
+				else
+					x = ActorMaxX - 1
+					spd = -12
+				end if
+				
+				poke p + EnemyXOfs, x
+				poke p + EnemySpdOfs, spd
+				poke p + EnemyTypeOfs, Random() band 7
+			end if
+		else
+			CollideEnemy(p, i)
+
+			if type = EnemyTypePellet then
+				timer = 1
+			else
+				timer = timer + spd
+				x = x + (timer >> 4)
+				timer = timer band $F
+				
+				poke p + EnemyXOfs, x
+				poke p + EnemyTimerOfs, timer
+			end if
+
+			if (x <= ActorMinX) or (x >= ActorMaxX) then ' Enemy moved out?
+				if type = EnemyTypeBall or type = EnemyTypeTank or type = EnemyTypeArrow then
+					' Turn around
+					if spd < 0 then
+						x = ActorMinX + 1
+					else
+						x = ActorMaxX - 1
+					end if
+					
+					spd = -spd
+					poke p + EnemyXOfs, x
+					poke p + EnemySpdOfs, spd
+					
+					if type = EnemyTypeArrow then
+						' Become a tank
+						poke p + EnemyTypeOfs, EnemyTypeTank
+					end if
+				else
+					' Disappear
+					poke p + EnemySpdOfs, 0
+				end if
+			end if
+			
+			CollideEnemy(p, i)
+		end if		
+	
+		p = p + EnemyMemSize
+	next
+end sub
+
+
+' LoadPalette(ResourceAddr(ForestPal), 16, 0)
+' LoadPalette(ResourceAddr(MManiaPal), 16, 16)
+
+' LoadTiles(ScoreBaseTile, ResourceAddr(ScoreTil), ScoreTileCount, 4)
+' LoadTiles(PlayerBaseTile, ResourceAddr(MManiaTil), PlayerTileCount, 4)
+' LoadTiles(ShotBaseTile, ResourceAddr(PlayerShotTil), ShotTileCount, 4)
+' LoadTiles(256, ResourceAddr(DefaultBkgTil), 64, 4)
+' LoadTiles(MapBaseTile, ResourceAddr(ForestTil), 64, 4)
+
+
+playerX = PlayerCenterX
+playerY = PlayerMinY
+playerCurrentLane = 0
+playerTargetLane = 0
+
+' Background palette
+LoadPalette(ResourceAddr(ShipPal), 16, 0)
+' Ship palette
+LoadPalette(ResourceAddr(ShipPal), 16, 16)
+' Tileset
+LoadTiles(0, ResourceAddr(ShipTil), 256, 4)
+
+DrawLanes()
+InitEnemies()
+InitShots()
+
+do
+	' *** Player ***
+	
+	joy = ReadJoypad1()	
+	
+	if joy band joyLeftMask then
+		playerLookingLeft = 1
+	elseif joy band joyRightMask then
+		playerLookingLeft = 0
+	end if
+
+	if playerCurrentLane = playerTargetLane then
+		if (joy band joyUpMask) and (playerCurrentLane > 0) then
+			playerTargetLane = playerTargetLane - 1
+			ChangeLane()
+		elseif (joy band joyDownMask) and (playerCurrentLane < LaneCount - 1) then
+			playerTargetLane = playerTargetLane + 1
+			ChangeLane()
+		end if
+	else
+		if playerY <> playerTargetY then
+			if playerY < playerTargetY then
+				playerY = playerY + 12
+			else
+				playerY = playerY - 12
+			end if
+		else
+			playerCurrentLane = playerTargetLane
+		end if
+	end if
+	
+'	if joy band (joyFireAMask bor joyFireBMask) then
+		Fire()
+'	end if
+
+	if playerFireDelay then
+		playerFireDelay = playerFireDelay - 1
+	end if
+	
+	' *** Shots ***
+	
+	MoveShots()
+	MoveEnemies()
+		
+	' *** Draw ***
+
+	ResetSprites()	
+	DrawPlayerShip()
+	DrawShots()
+	DrawEnemies()
+	FinishSprites()
+	
+	WaitForVBlankNoInt()
+	UpdateSprites()
+	
+	frameTimer = frameTimer + 1
+loop
+
+
+asm
+
+LaneCoords:
+	.db 0*24, 1*24, 2*24, 3*24, 4*24, 5*24, 6*24
+
+end asm

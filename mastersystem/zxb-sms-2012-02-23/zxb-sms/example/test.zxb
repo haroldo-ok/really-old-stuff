@@ -1,0 +1,403 @@
+sub fastcall UpdateSprites()
+	asm
+		; Since it's a fastcall function, you can do that.
+		jp UpdateSprites ; Jumps directly to the actual asm routine
+	end asm
+end sub
+
+sub fastcall WaitForVBlankNoInt()
+	asm
+		; Since it's a fastcall function, you can do that.
+		jp WaitForVBlankNoInt ; Jumps directly to the actual asm routine
+	end asm
+end sub
+
+sub fastcall SetSprite(num as UByte, x as UByte, y as UByte, tile as UByte)
+	asm
+		exx
+		pop hl ; ret addr
+		exx 
+
+		ld d, 0
+		ld e, a		; de = num
+		pop bc		; b = x
+		
+		ld hl, hw_sprites_y
+		add hl, de
+		pop af
+		ld (hl), a	; hw_sprites_y[num] = y
+
+		ld hl, hw_sprites_xc		
+		add hl, de
+		add hl, de
+		ld (hl), b	; hw_sprites_xc[num << 1] = x
+		
+		inc hl
+		pop af
+		ld (hl), a	; hw_sprites_xc[(num << 1) + 1] = tile
+
+		exx
+		push hl ; stores ret addr back
+		exx
+	end asm
+end sub
+
+const joyUpMask    as UByte = 1
+const joyDownMask  as UByte = 2
+const joyLeftMask  as UByte = 4
+const joyRightMask as UByte = 8
+const joyFireAMask as UByte = 16
+const joyFireBMask as UByte = 32
+
+function fastcall ReadJoypad1() as UByte
+	asm
+		in	a, ($dc)	; Reads joystick 1
+		cpl			; Inverts all bits
+	end asm
+end function
+
+function fastcall ReadJoypad2() as UByte
+	asm
+		in	a, ($dc)	; Reads UP and DOWN
+		cpl			; Inverts all bits
+		rla
+		rla
+		rla			; Puts them into the 2 lower bits
+		and	$03		; Masks them
+		ld	l, a
+		in	a, ($dd)	; Reads the remaining bits
+		cpl			; Inverts all bits
+		add	a, a
+		add	a, a		; Shifts them to the correct position
+		or	l		; Groups them with the first two
+	end asm
+end function
+
+function fastcall AndW(A as UInteger, B as UInteger) as UInteger
+	asm
+		; hl starts loaded with A	
+		pop bc ; ret addr
+		
+		pop de ; de = B
+		
+		ld a, l
+		and e
+		ld l, a ; l = l & e
+		
+		ld a, h
+		and d
+		ld h, a ; h = h & d
+		
+		push bc ; stores ret addr back
+	end asm
+end function
+
+function fastcall ResourceAddr(id as UInteger) as UInteger
+	asm
+		ld de, resource_pointer_table
+		add hl, de		; hl now points to the table entry
+		
+		ld a, (hl)		
+		ld de, $FFFF
+		ld (de), a		; Selects page 2 ROM bank
+		
+		inc hl
+		ld e, (hl)
+		inc hl
+		ld d, (hl)		; Loads offset into de
+			
+		ld l, e
+		ld a, d
+		and $3f
+		or $80			; Recomputes the address as pertaining to the bank 2 area
+		ld h, a		
+		
+		; Bank is set, and hl is pointing to the correct resource
+	end asm
+end function
+
+sub fastcall LoadPalette(addr as UInteger, count as UByte, firstColor as UByte)
+	asm
+		exx
+		pop hl ; ret addr
+		exx
+		
+		pop bc	; b = count
+		pop de	; d = first color
+		ld c, d
+		
+		call LoadPalette
+
+		exx
+		push hl ; stores ret addr back
+		exx
+	end asm
+end sub
+
+sub fastcall LoadTiles(firstTile as UInteger, sourceAddr as UInteger, tileCount as UInteger, bpp as UByte)
+	asm
+		exx
+		pop hl ; ret addr
+		exx
+		
+		; hl = tile number to start at (already set)
+		pop ix		; ix = location of tile data
+		pop bc		; bc = No. of tiles to load
+		pop de		; d  = bits per pixel		
+		
+		call LoadTiles
+
+		exx
+		push hl ; stores ret addr back
+		exx
+	end asm
+end sub
+
+sub fastcall SetBkgData(sourceAddr as UInteger, x as UByte, y as UByte, w as UByte, h as UByte)
+	asm
+		exx
+		pop hl ; ret addr
+		exx	
+		
+		; Loads registers
+		
+		pop bc
+		ld e, b		; e = x
+		pop bc
+		ld d, b		; d = y
+		
+		pop bc
+		ld a, b		
+		pop bc		; b = height
+		ld c, a		; c = width
+
+		; Computes bkg map VRAM starting address
+		
+		push	hl	
+		ld	l, d
+		ld	h, 0
+		add	hl, hl
+		add	hl, hl
+		add	hl, hl
+		add	hl, hl
+		add	hl, hl		; HL = Y*32
+		ld	d, 0
+		add	hl, de		; HL = (Y*32) + X
+		add	hl, hl		; HL = ((Y*32) + X) * 2
+		ld	de, NameTableAddress
+		add	hl, de
+		ld	d, h
+		ld	e, l
+		pop	hl
+		
+		; Loops through the rows
+		__SetBkgData__lineLoop:
+			push	bc
+
+				push	hl
+				ld	h, d
+				ld	l, e
+				call	VRAMToHL	; Set VRAM write address
+				pop	hl
+
+				push	af
+				__SetBkgData__colLoop:
+					ld	a, (hl)
+					out	($be), a	; Character number
+					inc	hl
+					ld	a, (hl)
+					out	($be), a	; Attribute number
+					inc	hl
+
+					dec	c
+					jp	nz, __SetBkgData__colLoop; Repeat until c is zero
+				pop	af
+
+			pop	bc
+
+			; Calculates next VRAM addr
+			ld	a, e
+			add	a, 64
+			jp	nc, __SetBkgData__notCarry
+			inc	d	
+		__SetBkgData__notCarry:
+			ld	e, a
+
+			dec	b
+			jp	nz, __SetBkgData__lineLoop	; Loops until all lines are drawn
+
+		exx
+		push hl ; stores ret addr back
+		exx
+	end asm
+end sub
+
+
+
+#include "test.zxi"
+
+const fixShift as Integer = 6
+const fixScale as Integer = 1 << fixShift
+const padMaxSpd as Integer = 8 * fixScale
+const padIncSpd as Integer = fixScale
+const ballMaxSpd as Integer = 8 * fixScale
+const padPosY as Integer = 160
+const maxX as Integer = 248 * fixScale
+const maxY as Integer = 184 * fixScale
+const padWidth as Integer = 6
+const padMaxX as Integer = maxX - (padWidth - 1) * 8 * fixScale
+
+dim padX, padSpdX as Integer
+dim ballX, ballSpdX, ballY, ballSpdY as Integer
+dim joy as UByte
+dim buffer(0 to 5) as UByte
+
+
+sub DrawPad()
+	dim i as UByte
+	dim x as UByte
+	
+	x = padX >> fixShift
+
+	SetSprite(0, x, padPosY, 128)
+	x = x + 8
+	
+	for i = 1 to padWidth - 2
+		SetSprite(i, x, padPosY, 129)
+		x = x + 8
+	next
+	
+	SetSprite(i, x, padPosY, 130)
+end sub
+
+sub fastcall SetBufferByte(index as UInteger, b as UByte)
+	' Temporary workaround; arrays aren't working as they should.
+	asm
+		pop bc		; ret addr
+		
+		pop de
+		ld a, d		; byte data
+		
+		ld de, zb_buffer
+		add hl, de	; hl now points to dest addr
+		
+		ld (hl), a
+		
+		push bc 	; ret addr
+	end asm
+end sub
+
+function fastcall GetBufferAddr() as UInteger
+	asm
+		ld hl, zb_buffer
+	end asm
+end function
+
+sub DrawBlock(x as UByte, y as UByte, number as UByte)
+	dim i, n as UByte	
+	dim buffer(0 to 5) as UByte
+	
+	for i = 0 to 4 step 2
+		SetBufferByte(i, number)
+		SetBufferByte(i + 1, 0)
+		number = number + 1
+	next
+	
+	SetBkgData(GetBufferAddr(), x, y, 3, 1)
+end sub
+
+sub DrawBackground()
+	dim i, j as UByte
+	dim n, m as UByte
+	
+	n = 144
+	for i = 4 to 12	
+		m = n
+		for j = 0 to 27 step 3
+			if m >= 165 then
+				m = 144
+			end if
+			
+			DrawBlock(j, i, m)
+			m = m + 3
+		next
+		
+		n = n + 3
+		if n >= 165 then
+			n = 144
+		end if
+	next
+end sub
+
+ballSpdX = ballMaxSpd >> 1
+ballSpdY = ballMaxSpd >> 1
+
+LoadPalette(ResourceAddr(ArkaPal), 16, 0)
+LoadPalette(ResourceAddr(ArkaPal), 16, 16)
+
+LoadTiles(128, ResourceAddr(ArkaTil), 64, 4)
+
+DrawBackground()
+
+do
+	' *** Player ***
+
+	joy = ReadJoypad1()
+	if AndW(joy, joyLeftMask) then
+		padSpdX = padSpdX - padIncSpd
+		if padSpdX < -padMaxSpd then
+			padSpdX = -padMaxSpd
+		end if		
+		
+	elseif AndW(joy, joyRightMask) then
+		padSpdX = padSpdX + padIncSpd
+		if padSpdX > padMaxSpd then
+			padSpdX = padMaxSpd
+		end if
+		
+	elseif 1 then 'else doesn't seem to be working correctly when used together with elsif...
+		if padSpdX < 0 then
+			padSpdX = -(-padSpdX >> 1)
+		else
+			padSpdX = padSpdX >> 1
+		end if
+	end if
+	
+	padX = padX + padSpdX
+	
+	if padX < 0 then
+		padX = 0
+	elseif padX > padMaxX then
+		padX = padMaxX
+	end if
+	
+
+	' *** Ball ***
+	
+	ballX = ballX + ballSpdX
+	ballY = ballY + ballSpdY
+	
+	if ballX < 0 then
+		ballX = 0
+		ballSpdX = -ballSpdX
+	elseif ballX > maxX then
+		ballX = maxX
+		ballSpdX = -ballSpdX
+	end if
+	
+	if ballY < 0 then
+		ballY = 0
+		ballSpdY = -ballSpdY
+	elseif ballY > maxY then
+		ballY = maxY
+		ballSpdY = -ballSpdY
+	end if
+	
+	' *** Draw ***
+	
+	DrawPad()	
+	SetSprite(6, ballX >> fixShift, ballY >> fixShift, 131)	
+	
+	WaitForVBlankNoInt()
+	UpdateSprites()
+loop

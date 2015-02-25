@@ -1,0 +1,175 @@
+#sprite Punch1
+    image "BOT_PNC1.PCX" (-103,0)
+	colors 64
+#end
+
+#sprite Punch2
+    image "BOT_PNC2.PCX" (-80,0)
+	colors 64
+#end
+
+#sprite Kick1
+    image "BOT_KIK1.PCX" (-65,0)
+	colors 64
+#end
+
+#sprite Kick2
+    image "BOT_KIK2.PCX" (-82,0)
+	colors 64
+#end
+
+#sprite FlyKick
+    image "BOT_FKIK.PCX" (-72,-61)
+	colors 64
+#end
+
+#sprite Backg1
+    image "BOT_BKG1.PCX" (0,0)
+    colors 32 66
+#end
+
+#sprite Magic1
+    image "BOT_MAG1.PCX" (-80,0)
+	colors 64
+#end
+
+#sprite Magic2
+    image "BOT_MAG2.PCX" (-75,-1)
+	colors 64
+#end
+
+#sprite Magic3
+    image "BOT_MAG3.PCX" (-75,0)
+	colors 64
+#end
+
+#sprite Magic4
+    image "BOT_MAG4.PCX" (0,0)
+	colors 64
+#end
+
+#spriteseq Magic
+    frame Magic1 5
+    frame Magic2 5
+    frame Magic3 5
+#end
+
+#sprite Fball1
+    image "BOT_FBL1.PCX" (-32,-20)
+    colors 32 65
+#end
+
+#sprite Fball2
+    image "BOT_FBL2.PCX" (-32,-20)
+    colors 32 65
+#end
+
+#sprite Fball3
+    image "BOT_FBL3.PCX" (-32,-20)
+    colors 32 65
+#end
+
+#sprite Fball4
+    image "BOT_FBL4.PCX" (-32,-20)
+    colors 32 65
+#end
+
+#spriteseq Fball
+    frame Fball1 5
+    frame Fball2 5
+    frame Fball3 5
+    frame Fball4 5
+#end
+
+#sprite Tackle1
+    image "BOT_TCKL.PCX" (-32,-32)
+    colors 64
+#end
+
+#sprite I_Won
+    image "BOT_WIN2.PCX" (-80,0)
+	colors 64
+#end
+
+#sprite Backg_Win
+    image "BOT_WIN1.PCX" (0,0)
+    colors 64 65
+#end
+
+#anim Dummy
+#end
+
+#anim Punch 150
+	stars xh 0 300 129 (0,0,0) 140 (255,255,255) 255 -5
+    //
+    show Punch1
+    path Punch1 100 0 (0,0) (160,0)
+    //
+    place Punch2 (160,0)
+    hide Punch1 100
+    show Punch2 100
+#end
+
+#anim Kick 200
+    background Backg1 200 0 (0,-40) (0,0)
+    //
+    show Kick1
+    path Kick1 100 0 (160,-100) (160,0)
+    path Kick1 140 120 (160,0) (120,0)
+    //
+    hide Kick1 140
+    show Kick2 140
+    path Kick2 150 140 (120,0) (150,0)
+//    place Kick2 (160,0) 100
+#end
+
+#anim Fly_Kick 130
+    show FlyKick
+    path FlyKick 100 0 (180,-300,-300) (160,50,0)
+    stars zn 0 130 129 (0,0,32) 140 (255,255,255) 255 5
+#end
+
+#anim FireBall1 250
+    stars yv 0 150 129 (0,0,0) 140 (255,255,255) 255 5
+    flash 150 0 5 (0,0,0) (128,128,0) (192,192,64)
+    place Magic (160,0)
+    show Magic
+    //
+    hide Magic 150
+    stars zn 150 250 129 (0,0,32) 140 (255,255,255) 255 5
+    show Magic4 150
+    path Magic4 250 150 (140,0,0) (180,0,-100)
+    show Fball 150
+    path Fball 250 150 (140,20,0) (80,30,200)
+#end
+
+#anim S_Tackle 100
+    stars zn 0 100 129 (0,0,32) 140 (255,255,255) 255 5
+    show Tackle1
+    path Tackle1 100 0 (240,20,-200) (80,20,100)
+#end
+
+#anim Main 300
+	stars xh 0 300 129 (0,0,0) 140 (255,255,255) 255 -5
+	place Spr1 (0,-10) 10
+	show Spr1
+	path Spr1 300 0 (0,-10) (100,100) (240,20) (-100, 20)
+//	hide Spr1 100
+//	show Spr1 200
+	show Spr2 100
+    path Spr2 250 100 (250, 0, -200) (-10, 160) (60, 1, 100)
+	write "Isto ‚ um\nTeste" 63 0 300 200
+#end
+
+#anim Victory 400
+	stars xh 0 100 129 (0,0,0) 140 (255,255,255) 255 -5
+    //
+    show Punch1
+    path Punch1 100 0 (0,0) (160,0)
+    //
+    background Backg_Win 400 100 (-20,-20) (0,0)
+    place I_Won (160,0)
+    hide Punch1 100
+    show I_Won 100
+#end
+

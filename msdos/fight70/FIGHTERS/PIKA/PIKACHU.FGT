@@ -1,0 +1,27 @@
+#name "Pikachu"
+#stand "PIKA_04.PCX" 0 0
+#defend "PIKA_04.PCX" 0 0
+#dodge "PIKA_04.PCX" 0 0
+#duck "PIKA_04.PCX" 0 0
+#jumpup "PIKA_04.PCX" 0 -8
+#jumpfall "PIKA_04.PCX" 0 -8
+#selface "PIKA_04.PCX" 0 0
+#selicon "PIKA_ICO.PCX" 20 20
+#bgmusic "PIKA.MOD"
+#attack "326P"
+    anim ThShock
+    damage 50
+    power 100
+#end
+#attack "K"
+    anim FlyingKick
+    midair
+    aerial
+    damage 10
+    power 0
+#end
+#attack "P"
+    anim Main
+    damage 5
+    power 0
+#end

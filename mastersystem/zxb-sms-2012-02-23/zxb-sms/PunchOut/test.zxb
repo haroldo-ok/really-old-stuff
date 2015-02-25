@@ -1,0 +1,220 @@
+#include "hardware.zxi"
+#include "sprite.zxi"
+#include "test.zxi"
+
+
+const MikeyTileCount as UInteger = 1566
+const MikeyTileW as UByte = 9
+const MikeyTileH as UByte = 16
+
+const CacheBaseTile as UInteger = 64
+const CacheMaxTiles as UInteger = 192
+
+dim tileCache(1 to MikeyTileCount) as UByte
+dim tileInUse(1 to CacheMaxTiles) as UByte
+'dim tileCacheTTL(1 to CacheMaxTiles) as UByte
+
+dim tilesToLoad(1 to MikeyTileW * MikeyTileH * 3) as UByte
+dim tilesToLoadEnd as UInteger
+
+dim frameBuffer(1 to MikeyTileW * MikeyTileH) as UInteger
+
+dim i, tile, tileNum as UInteger
+
+
+asm
+    ld a,%11100110
+;          |||| |`- Zoomed sprites -> 16x16 pixels
+;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
+;          |||`---- 30 row/240 line mode
+;          ||`----- 28 row/224 line mode
+;          |`------ VBlank interrupts
+;          `------- Enable display
+    out ($bf),a
+    ld a,$81
+    out ($bf),a
+end asm
+
+function fastcall ColumnOffsetMap() as UInteger
+	asm
+		ld hl, ColumnOffsetMap
+	end asm
+end function
+
+function fastcall RowWidthMap() as UInteger
+	asm
+		ld hl, RowWidthMap
+	end asm
+end function
+
+function fastcall RowOffsetMap() as UInteger
+	asm
+		ld hl, RowOffsetMap
+	end asm
+end function
+
+function fastcall RowHeightMap() as UInteger
+	asm
+		ld hl, RowHeightMap
+	end asm
+end function
+
+
+function CalcFrameAddr(frame as UByte) as UInteger
+	dim frameX, frameY as UByte
+	dim ofsX, ofsY as UInteger
+	
+	frameX = frame band $3
+	frameY = frame >> 2
+	
+	ofsX = peek(UInteger, ColumnOffsetMap() + (frameX << 1))
+	ofsY = peek(UInteger, RowOffsetMap() + (frameY << 1))
+	
+	return ResourceAddr(MikeyMap) + ofsX + ofsY
+end function
+
+function GetRowWidth(frame as UByte) as UByte
+	return peek(RowWidthMap() + (frame band $3))
+end function
+
+function GetColumnHeight(frame as UByte) as UByte
+	return peek(RowHeightMap() + (frame >> 2))
+end function
+
+function FindFreeCacheSlot() as UByte
+	dim i as UInteger
+	dim p as UInteger
+	
+	p = @tileInUse
+	for i = CacheBaseTile to CacheBaseTile + CacheMaxTiles - 1
+		if peek(p) = 0 then
+			poke(p, 1)
+			return i
+		end if
+		
+		p = p + 1
+	next
+	
+	return 0
+end function
+
+sub LoadCachedTiles()
+	for i = 0 to tilesToLoadEnd - 3 step 3
+		tile = peek(UInteger, @tilesToLoad + i)
+		tileNum = peek(@tilesToLoad + i + 2)
+		
+		tile = ((tile << 1) + tile) << 3 ' tile *= 24
+	
+		if tile band $4000 then
+			' Second sprite bank
+			SetPage2(3)
+		else
+			' First sprite bank
+			SetPage2(2)
+		end if
+			
+		LoadTiles(tileNum, $8000 + (tile band $3FFF), 1, 3)
+	next
+end sub
+
+function GetCachedTile(tile as UInteger) as UInteger
+	dim tileNum as UByte
+	
+	tileNum = peek(@tileCache + tile)
+	if tileNum <> 0 then
+		return tileNum
+	end if
+	
+	tileNum = FindFreeCacheSlot()
+	poke @tileCache + tile, tileNum
+
+	' Add the tile to the loading queue
+	poke UInteger @tilesToLoad + tilesToLoadEnd, tile
+	poke UByte @tilesToLoad + tilesToLoadEnd + 2, tileNum
+	tilesToLoadEnd = tilesToLoadEnd + 3
+
+	return tileNum
+end function
+
+sub DrawMikey(x as UByte, y as UByte, frame as UByte)
+	dim frameP, bufferP as UInteger
+	dim frameLinDelta, bufferLinDelta as UByte
+	dim rowW, colH as UByte
+	dim i, j as UByte
+	
+	tilesToLoadEnd = 0
+	
+	frameP = CalcFrameAddr(frame)
+	bufferP = @frameBuffer
+	rowW = GetRowWidth(frame)
+	colH = GetColumnHeight(frame)
+	
+	frameLinDelta = (32 - rowW) << 1
+	bufferLinDelta = (MikeyTileW - rowW) << 1
+	
+	for i = 0 to colH - 1
+		for j = 0 to rowW - 1
+			poke UInteger bufferP, GetCachedTile(peek(UInteger, frameP))
+		
+			frameP = frameP + 2
+			bufferP = bufferP + 2
+		next
+
+		frameP = frameP + frameLinDelta
+		bufferP = bufferP + bufferLinDelta
+	next
+
+	SetBkgData(@frameBuffer, x, y, MikeyTileW, MikeyTileH)
+end sub
+
+LoadPalette(ResourceAddr(ForestPal), 16, 0)
+LoadPalette(ResourceAddr(MManiaPal), 16, 16)
+
+'SetPage2(2)
+'LoadTiles(0, $8000, 256, 3)
+'SetBkgData(ResourceAddr(MikeyMap), 0, 0, 32, 28)
+'SetBkgData(CalcFrameAddr(3), 0, 0, 32, GetColumnHeight(3))
+'SetBkgData(CalcFrameAddr(4), 0, 15, 32, 14)
+'dim i, tile, tileNum as UInteger
+for i = 1 to MikeyTileCount
+	poke @tileCache + i, 0
+next
+
+DrawMikey(0, 0, 7)
+
+asm
+HerePlease:
+end asm
+
+LoadCachedTiles()
+
+DrawMikey(10, 0, 1)
+LoadCachedTiles()
+
+'SetPage2(2)
+'LoadTiles($40, $8000, 1, 3)
+'LoadTiles($41, $8010, 1, 3)
+'LoadTiles($42, $8020, 1, 3)
+
+'SetPage2(2)
+'LoadTiles(CacheBaseTile, $8000, 64, 3)
+
+do
+loop
+
+asm
+
+ColumnOffsetMap:
+	.dw 0, 16,	30,	48,	60
+
+RowWidthMap:
+	.db 8,	7,	9,	6
+
+	
+RowOffsetMap:
+	.dw 0, 896,	1920,	2816,	3840,	4736
+	
+RowHeightMap:
+	.db 14,	16,	14,	16,	14
+
+end asm

@@ -1,0 +1,13 @@
+:clockw
+/n/n/n/e/e/e/s/s/s/w/w/w
+#goto clockw
+
+:counterclockw
+/n/n/n/w/w/w/s/s/s/e/e/e
+#goto counterclockw
+
+:talk
+How should I walk?
+!clockw;Clockwise
+!counterclockw;Counter-clockwise
+/i

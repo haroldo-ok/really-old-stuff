@@ -1,0 +1,35 @@
+123 456 	"Blah \# Bleh" 1["Blih"0] 0["Bloh"0] "Bluh"! 
+~ This is a line comment
+3 A. 
+A:[
+	A: " \# " 
+	A: 1 - A. 
+A:]
+!
+
+1 2 < 0 = ["Sanity check 1 failed"!]
+3 2 > 0 = ["Sanity check 2 failed"!]
+
+"A123456789"
+"B123456789"
+"C123456789"
+"D123456789"
+"E123456789"
+!
+
+"This is a pretty big text, and it should, theorethically, span multiple pages, if the text formatting routine is working correctly. This also doubles as a word wrapping test. Good luck to me."!
+"Testing line
+break."!
+
+"Seems nice, so far.
+Doesn't seem so nice..."?
+A.
+ 
+A:
+"you selected option \#"!
+
+A: 0 = ["Thanks! =)"! 0]
+A: 1 = ["I'll improve it! =)"! 0]
+
+"Preparing to jump to secondary program..."!
+1j

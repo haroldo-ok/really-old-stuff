@@ -1,0 +1,19 @@
+dim currentSprite as UByte
+
+sub fastcall ResetSprites()
+	currentSprite = 0
+end sub
+
+sub AddSprite(x as UByte, y as UByte, tile as UByte)
+	SetSprite(currentSprite, x, y, tile)
+	currentSprite = currentSprite + 1
+end sub
+
+sub AddDoubleSprite(x as UByte, y as UByte, tile as UByte)
+	AddSprite(x - 8, y, tile)
+	AddSprite(x, y, tile + 2)
+end sub
+
+sub FinishSprites()
+	SetSprite(currentSprite, 0, 208, 0)
+end sub

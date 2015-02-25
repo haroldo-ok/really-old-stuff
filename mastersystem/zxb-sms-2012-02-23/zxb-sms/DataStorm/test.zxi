@@ -1,0 +1,4 @@
+
+CONST ShipPal AS UINTEGER = 0
+
+CONST ShipTil AS UINTEGER = 3

@@ -1,0 +1,111 @@
+#sprite Spr1
+    image "HIEI_PC1.PCX" (-20,0)
+	colors 64
+#end
+
+#sprite Spr2
+    image "HIEI_PC2.PCX" (-20,0)
+	colors 64
+#end
+
+#sprite Drgn_Atk1
+    image "HIEI_DR1.PCX" (-40,0)
+	colors 64
+#end
+
+#sprite Drgn_Atk2
+    image "HIEI_DR2.PCX" (0,0)
+	colors 64
+#end
+
+#sprite Drgn_Fir1
+    image "HIEI_DF1.PCX" (0,0)
+	colors 64 65
+#end
+
+#sprite Drgn_Fir2
+    image "HIEI_DF2.PCX" (0,0)
+	colors 64 65
+#end
+
+#sprite Drgn_Fir3
+    image "HIEI_DF3.PCX" (0,0)
+	colors 64 65
+#end
+
+#sprite Drgn_Fir4
+    image "HIEI_DF4.PCX" (0,0)
+	colors 64 65
+#end
+
+#spriteseq Drgn_Fire
+    frame Drgn_Fir1 2
+    frame Drgn_Fir2 2
+    frame Drgn_Fir3 2
+    frame Drgn_Fir4 2
+#end
+
+#sprite Drgn_Fir5
+    image "HIEI_DF5.PCX" (-160,-80)
+	colors 64 65
+#end
+
+#sprite Drgn_Fir6
+    image "HIEI_DF6.PCX" (-160,-80)
+	colors 64 65
+#end
+
+#sprite Drgn_Fir7
+    image "HIEI_DF7.PCX" (-160,-80)
+	colors 64 65
+#end
+
+#sprite Drgn_Fir8
+    image "HIEI_DF8.PCX" (-160,-80)
+	colors 64 65
+#end
+
+#spriteseq Drgn_Fire2
+    frame Drgn_Fir5 2
+    frame Drgn_Fir6 2
+    frame Drgn_Fir7 2
+    frame Drgn_Fir8 2
+#end
+
+#anim Dummy
+#end
+
+#anim Main 150
+	stars zn 0 150 129 (0,0,63) 140 (255,255,255) 255 5
+	write "IAAAHHH..." 140 50 150 50
+    //
+    show Spr1 0
+    path Spr1 100 0 (160,8) (164,16) (160,8) (156,16) (160,8)
+    //
+    hide Spr1 100
+    show Spr2 100
+    path Spr2 120 100 (160,8) (160,8,80)
+#end
+
+#anim Dragon 400
+	stars yv 0 150 129 (0,0,63) 140 (128,128,255) 255 5
+    //
+    show Drgn_Atk1 0
+    path Drgn_Atk1 100 0 (160,32) (160,16)
+    //
+	stars xh 150 300 129 (0,0,63) 140 (128,128,255) 255 -5
+    //
+    hide Drgn_Atk1 150
+	write "Chamas Negras Mortais!!" 140 150 300 200
+    show Drgn_Atk2 150
+    path Drgn_Atk2 200 150 (160,32) (100,32)
+    //
+    place Drgn_Fire (150,20)
+    show Drgn_Fire 200
+    //
+    hide Drgn_Atk2 300
+    hide Drgn_Fire 300
+	stars yv 300 400 129 (0,0,63) 140 (128,128,255) 255 -5
+    show Drgn_Fire2 300
+    path Drgn_Fire2 400 300 (-32,80,-255) (240,0,100)
+#end

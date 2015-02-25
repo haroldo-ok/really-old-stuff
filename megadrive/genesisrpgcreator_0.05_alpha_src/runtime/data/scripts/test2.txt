@@ -1,0 +1,3 @@
+:top
+/n/n/e/e/s/s/w/w
+#goto top

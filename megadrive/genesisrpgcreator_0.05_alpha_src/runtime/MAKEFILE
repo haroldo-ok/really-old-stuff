@@ -1,0 +1,63 @@
+.SUFFIXES : .x .o .c .s
+
+CC=hcc
+TOP=top
+AS=jas
+LD=ld
+RM=del
+CP=copy
+GFS=data\applygfs
+INC= -I..\\..\\include\\
+
+
+all     : prog
+
+prog: rpg.o rdctile.o rpgmap.o randmap.o actor.o rpgwalk.o\
+zopint.o rpg_gui.o rgiqsort.o\
+sega.o genesis.o utils.o psgsound.o interr.o gfs.o rdc.o \
+conio.o string.o plee.o font.o genesisb.o
+	$(LD) -b -g -v -o rpg.bin -f objet.inc
+	$(CP) rpg.bin stub.bin
+	$(GFS) rpg.bin 65536 gamedata.gfs
+
+clean:
+	$(RM) *.o
+	$(RM) rpg.s
+	$(RM) rpg.bin
+	$(RM) stub.bin
+	$(RM) *.bak
+
+.c.o: 
+	@-echo "Making component -> $*.o"
+	$(CC) $(INC) $<
+	$(TOP) $*.s
+	$(AS) $*.s
+
+.s.o:
+	@-echo "Making component -> $*.o"
+	$(AS) $(CDIR)$*.s
+
+
+# dependencies -- DO NOT DELETE BELOW THIS LINE -- make depends on it.
+
+rpg.o	  : rpg.c
+rdctile.o :	rdctile.c
+rpgmap.o  :	rpgmap.c
+randmap.o :	randmap.c
+actor.o   :	actor.c
+rpgwalk.o :	rpgwalk.c
+zopint.o  :	zopint.c
+rpg_gui.o :	rpg_gui.c
+rgiqsort.o:	rgiqsort.c
+sega.o    : sega.s
+genesis.o :	genesis.c
+genesisb.o:	genesisb.c
+conio.o   :	conio.c
+string.o  :	string.c
+pleee.o   :	plee.c
+utils.o   :	utils.c
+psgsound.o:	psgsound.c
+interr.o  :	interr.c
+gfs.o  	  :	gfs.c
+rdc.o  	  :	rdc.c
+font.o    : font.c
