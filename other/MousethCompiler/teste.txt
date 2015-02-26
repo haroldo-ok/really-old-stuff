@@ -1,0 +1,184 @@
+	6 (:) (sto) ~ Defines instruction ":" (Load)
+	7 (.) (sto) ~ Defines instruction "." (Store)
+	8 (+) (sto) ~ Defines instruction "+"
+	9 (-) (sto) ~ Defines instruction "-"
+	10 (l) (sto) ~ Defines instruction "l" (Shift left)
+	11 (r) (sto) ~ Defines instruction "r" (Shift right)
+	12 (|) (sto) ~ Defines instruction "|" (Or)
+	13 (^) (sto) ~ Defines instruction "^" (And)
+	14 (`) (sto) ~ Defines instruction "`" (Not)
+	15 (=) (sto) ~ Defines instruction "=" (Equals)
+	16 (<) (sto) ~ Defines instruction "<" (Less than)
+	17 (>) (sto) ~ Defines instruction ">" (Greater than)
+	
+	(:negate) (_) (sto) ~ Defines instruction "_" (Negate)
+	(:multiply) (*) (sto) ~ Defines instruction "*" (Multiply)
+	(:divide) (/) (sto) ~ Defines instruction "/" (Divide)
+	(:modulus) (\) (sto) ~ Defines instruction "\" (Modulus)
+
+	(:different) (%) (sto) ~ Defines instruction "%" (Different, not equals)
+	(:geq) (g) (sto) ~ Defines instruction "g" (Greater than or equals)
+	(:leq) (l) (sto) ~ Defines instruction "l" (Less than or equals)
+
+	(:increment) (i) (sto) ~ Defines instruction "i" (Increment)
+	(:decrement) (j) (sto) ~ Defines instruction "j" (Decrement)
+	
+	(:load_ref) (@) (sto) ~ Defines instruction "@" (Load by reference)
+	(:store_ref) (;) (sto) ~ Defines instruction ";" (Store by reference)
+
+	(:stdin) (r) (sto) ~ Defines instruction "r" (Read char)
+	(:stdout) (w) (sto) ~ Defines instruction "w" (Write char)
+	(:quote) (") (sto) ~ Defines instruction """ (Output string)
+	(:outnumber) (!) (sto) ~ Defines instruction "!" (Writes number)
+	(:newline) (n) (sto) ~ Defines instruction "n" (New line)
+
+	(:dup) (d) (sto) ~ Defines instruction "d" (Duplicate top of the stack)
+	(:goto) (t) (sto) ~ Defines instruction "t" (Go to)
+	
+	(IO) (SYS6). ~ Sets IO as standard input
+	(IO) (SYS7). ~ Sets IO as standard output
+	
+	0 1024 (brz) ~ Skips to main program at address 1024
+
+(.setup_apc)
+	(CODESP): 2 - : ~ Gets PC from caller
+	(APC). ~ Sets APC so the code can be read
+	(ret)
+	
+(.inc_apc)	
+	(APC): 1 + (APC). ~ Increment APC
+	(ret)
+
+(.update_csp_from_apc)
+	(APC): ~ Gets APC
+	(CODESP): 2 - ~ Gets stack addr
+	. ~ Stores it
+	(ret)	
+	
+(.quote) ~ Instruction """
+	(:setup_apc) (call)
+(.quote_loop)
+	(AUXCODE): ~ Reads the code
+	d (\) = (:quote_noescape) (brz) ~ Checks if it is an escape char
+	(:quote_escape) (call)	
+(.quote_noescape)	
+	w ~ Writes char to the screen
+	(:inc_apc) (call) ~ Increment APC	
+
+	(AUXCODE): (") (eq) (:quote_loop) (brz)
+
+	(:inc_apc) (call) ~ Increment APC
+	(:update_csp_from_apc) (call)
+	(ret)
+	
+(.quote_escape)
+	(:inc_apc) (call) ~ Increment APC (skip "\")
+	(AUXCODE): (SYS2). ~ Reads the code into SYS2
+	(SYS2): (n) = (:quote_not_linebreak) (brz)
+	10 ~ Line break
+	0 (:quote_escape_end) (brz)
+(.quote_not_linebreak)
+	(SYS2): ~ If no specific escape char found, simply return whatever is there.
+(.quote_escape_end)
+	(ret)
+	
+(.outnumber)
+	d 0 < (:outnumber_00) (brz) ~ Is number negative?
+	45 w ~ If yes, writes "-" ...
+	_ ~ And negates number
+(.outnumber_00)
+	0 (SYS3). ~ Counter
+(.outnumber_01)
+	10 3 (sys) ~ Divide by 10, getting quotient and remainder
+	(:swap) (call) ~ Swaps quotient and remainder
+	(SYS3) i ~ Increment counter	
+	d 0 = (:outnumber_01) (brz) ~ Loop if quotient is not zero
+	(SYS). ~ Discards divider
+(.outnumber_02)
+	48 + w ~ Converts the digit to ASCII and outputs it.
+	(SYS3) j ~ Decrement counter	
+	(SYS3): 0 = (:outnumber_02) (brz) ~ Loop if counter is not zero
+	(ret)
+	
+(.stdin) ~ Standard input	
+	(SYS7)@ ~ Read data from standard input
+	(ret)
+
+(.stdout) ~ Standard output	
+	(SYS7); ~ Writes data to standard output
+	(ret)
+
+(.newline) ~ New line
+	10w ~ Outputs newline
+	(ret)
+
+(.multiply)
+	2 (sys) ~ Call multiplication service
+	(ret)
+
+(.divide)
+	3 (sys) ~ Call division service
+	(SYS). ~ Discard top of the stack
+	(ret)
+	
+(.modulus)
+	3 (sys) ~ Call division service
+	(SYS). ~ Get top of the stack (remainder)
+	(SYS1). ~ Discard divisor
+	(SYS): ~ Put remainder on stack.
+	(ret)
+
+(.negate)
+	(SYS). ~ Saves number
+	0 (SYS): - ~ Subtracts it from zero.
+	(ret)
+	
+(.different)
+	=` ~ Not equals
+	(ret)
+	
+(.geq)
+	<` ~ Not less than
+	(ret)
+	
+(.leq)
+	>` ~ Not more than
+	(ret)
+	
+(.increment)
+	(SYS). ~ Saves variable addr
+	(SYS)@ 1 + ~ Gets value and increments it
+	(SYS); ~ Stores it
+	(ret)
+
+(.decrement)
+	(SYS). ~ Saves variable addr
+	(SYS)@ 1 - ~ Gets value and increments it
+	(SYS); ~ Stores it
+	(ret)
+
+(.swap)
+	(SYS). (SYS1). ~ Saves top two elements
+	(SYS): (SYS1): ~ Pushes them back, reversed
+	(ret)
+
+(.dup)
+	(SYS). ~ Saves top element
+	(SYS): (SYS): ~ Pushes it twice
+	(ret)
+	
+(.load_ref)
+	::
+	(ret)
+
+(.store_ref)
+	:.
+	(ret)
+
+(.goto)
+	(SYS). ~ Saves destination addr
+	0 (SYS): (brz) ~ Does the jump
+	(ret)
+
+(=A 1) (=E 129)
+(_A) (_B) (_C) (_D) (_E) (_F)

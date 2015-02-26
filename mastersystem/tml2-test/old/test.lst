@@ -1,0 +1,87 @@
+				;
+				;	Disassembled by:
+				;		DASMx object code disassembler
+				;		(c) Copyright 1996-2003   Conquest Consultants
+				;		Version 1.40 (Oct 18 2003)
+				;
+				;	File:		test.com
+				;
+				;	Size:		72 bytes
+				;	Checksum:	243B
+				;	CRC-32:		D395B59A
+				;
+				;	Date:		Tue Apr 01 07:42:34 2008
+				;
+				;	CPU:		Zilog Z80 (Z80 family)
+				;
+				;
+				;
+					org	00200H
+				;
+0200				CSEG:
+0200 : C3 3C 02		" < "		jp	L023C
+				;
+0203 : 00		" "		nop
+0204 : E9		" "		jp	(hl)						;INFO: index jump
+0205				TEST.HELLOWORLD:
+0205 : C3 00 01		"   "		jp	L0100
+				;
+0208				TEST.BLAH:
+0208 : FD E5		"  "		push	iy
+020A : FD 21 00 00	" !  "		ld	iy,00000H
+020E : FD 39		" 9"		add	iy,sp
+0210 : 21 FE FF		"!  "		ld	hl,0FFFEH
+0213 : 39		"9"		add	hl,sp
+0214 : F9		" "		ld	sp,hl
+0215 : FD F9		"  "		ld	sp,iy
+0217 : FD E1		"  "		pop	iy
+0219 : C9		" "		ret
+				;
+021A				TEST.BLEH:
+021A : FD E5		"  "		push	iy
+021C : FD 21 00 00	" !  "		ld	iy,00000H
+0220 : FD 39		" 9"		add	iy,sp
+0222 : 21 4D 02		"!M "		ld	hl,0024DH
+0225 : EB		" "		ex	de,hl
+0226 : FD 6E 04		" n "		ld	l,(iy+004H)
+0229 : FD 66 05		" f "		ld	h,(iy+005H)
+022C : 01 80 00		"   "		ld	bc,00080H
+022F : ED B0		"  "		ldir
+0231 : FD F9		"  "		ld	sp,iy
+0233 : FD E1		"  "		pop	iy
+0235 : C9		" "		ret
+				;
+0236 : 05		" "		dec	b
+0237 : 4F		"O"		ld	c,a
+0238 : 6C		"l"		ld	l,h
+0239 : 61		"a"		ld	h,c
+023A : 68		"h"		ld	l,b
+023B : 21 21 36		"!!6"		ld	hl,03621H
+023E : 02		" "		ld	(bc),a
+023F : E5		" "		push	hl
+0240 : CD 05 02		"   "		call	TEST.HELLOWORLD
+0243 : C1		" "		pop	bc
+0244 : C3 3C 02		" < "		jp	L023C
+0247 : C9		" "		ret
+
+;--------------------------------------------------------------
+Symbol table
+============
+
+Value		Type	Name
+-----		----	----
+0100		Code	L0100
+0200		Code	CSEG
+0205		Code	TEST.HELLOWORLD
+0208		Code	TEST.BLAH
+021A		Code	TEST.BLEH
+023C		Code	L023C
+0248		Code	OVLSEG
+0248		Code	DSEG
+024A		Code	TEST.X
+024B		Code	TEST.Y
+024D		Code	TEST.S2
+
+Number of symbols:			11
+
+;--------------------------------------------------------------

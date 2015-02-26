@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE CodeBlocks_layout_file>
+<CodeBlocks_layout_file>
+	<File name="..\..\include\console\mth_conf.h" open="1" top="0">
+		<Cursor position="0" topLine="0"/>
+	</File>
+	<File name="..\..\include\mouseth.h" open="1" top="0">
+		<Cursor position="1789" topLine="47"/>
+	</File>
+	<File name="..\common\mouseth.c" open="1" top="0">
+		<Cursor position="931" topLine="19"/>
+	</File>
+	<File name="main.c" open="1" top="0">
+		<Cursor position="133" topLine="0"/>
+	</File>
+	<File name="mth_err.c" open="1" top="0">
+		<Cursor position="631" topLine="0"/>
+	</File>
+	<File name="mth_mem.c" open="1" top="0">
+		<Cursor position="41" topLine="0"/>
+	</File>
+	<File name="mth_prog.c" open="1" top="0">
+		<Cursor position="39" topLine="0"/>
+	</File>
+	<File name="mth_sys.c" open="1" top="1">
+		<Cursor position="632" topLine="9"/>
+	</File>
+</CodeBlocks_layout_file>

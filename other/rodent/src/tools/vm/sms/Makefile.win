@@ -1,0 +1,49 @@
+# Project: rodent sms
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = zcc.exe +sms
+WINDRES = windres.exe
+RES  = 
+OBJ  = ../../../lib/rdt_func.o ../../../lib/rdt_intr.o ../../../lib/vm/rdt_cons.o ../rdt_vm.o ../../../lib/rdt_fnci.o ../../../lib/sms/rdt_itfc.o ../../../lib/sms/mfs.o $(RES)
+LINKOBJ  = ../../../lib/rdt_func.o ../../../lib/rdt_intr.o ../../../lib/vm/rdt_cons.o ../rdt_vm.o ../../../lib/rdt_fnci.o ../../../lib/sms/rdt_itfc.o ../../../lib/sms/mfs.o $(RES)
+LIBS =  -L"C:/utils/z88dk/lib" -L"C:/utils/z88dk/lib/clibs" -m  
+INCS =  -I"C:/utils/z88dk/include"  -I"../../../../include"  -I"../../../../include/sms" 
+CXXINCS =  -I"C:/utils/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/utils/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/utils/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/utils/Dev-Cpp/include/c++/3.4.2"  -I"C:/utils/Dev-Cpp/include"  -I"../../../../include"  -I"../../../../include/sms" 
+BIN  = rdt_sms.sms
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS)  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before rdt_sms.sms all-after
+
+include extra.mak
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "rdt_sms.sms" $(LIBS)
+
+../../../lib/rdt_func.o: ../../../lib/rdt_func.c
+	$(CC) -c ../../../lib/rdt_func.c -o ../../../lib/rdt_func.o $(CFLAGS)
+
+../../../lib/rdt_intr.o: ../../../lib/rdt_intr.c
+	$(CC) -c ../../../lib/rdt_intr.c -o ../../../lib/rdt_intr.o $(CFLAGS)
+
+../../../lib/vm/rdt_cons.o: ../../../lib/vm/rdt_cons.c
+	$(CC) -c ../../../lib/vm/rdt_cons.c -o ../../../lib/vm/rdt_cons.o $(CFLAGS)
+
+../rdt_vm.o: ../rdt_vm.c
+	$(CC) -c ../rdt_vm.c -o ../rdt_vm.o $(CFLAGS)
+
+../../../lib/rdt_fnci.o: ../../../lib/rdt_fnci.c
+	$(CC) -c ../../../lib/rdt_fnci.c -o ../../../lib/rdt_fnci.o $(CFLAGS)
+
+../../../lib/sms/rdt_itfc.o: ../../../lib/sms/rdt_itfc.c
+	$(CC) -c ../../../lib/sms/rdt_itfc.c -o ../../../lib/sms/rdt_itfc.o $(CFLAGS)
+
+../../../lib/sms/mfs.o: ../../../lib/sms/mfs.c
+	$(CC) -c ../../../lib/sms/mfs.c -o ../../../lib/sms/mfs.o $(CFLAGS)

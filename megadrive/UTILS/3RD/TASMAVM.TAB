@@ -1,0 +1,64 @@
+"TASM ActVM Assembler.   "
+/****************************************************************************
+/* $Id: tasmavm.tab 1.0 2002/10/08 20:20:40 haroldo Exp $
+/****************************************************************************
+/* This is the instruction set definition table 
+/*   for the ActVM (Actor Virtual Machine).
+/*      Made by Haroldo de Oliveira Pinheiro
+/*
+/*  See TASM manual for info on table structure.
+/* 
+/*INSTR ARGS OP BYTES RULE CLASS SHIFT OR */
+/*-------------------------------------------*/
+
+NOP     ""      00   1  NOTOUCH 1
+
+JMP     *       01   3  NOTOUCH 1
+JPZ     *       02   3  NOTOUCH 1
+JLZ     *       03   3  NOTOUCH 1
+JGZ     *       04   3  NOTOUCH 1
+JTBL    *       05   3  NOTOUCH 1
+CALL    *       06   3  NOTOUCH 1
+RET     *       07   1  NOTOUCH 1
+
+PASS    ""      10   1  NOTOUCH 1
+SLEEP   *       11   3  NOTOUCH 1
+HALT    ""      12   1  NOTOUCH 1
+HIDE    ""      13   1  NOTOUCH 1
+SHOW    ""      14   1  NOTOUCH 1
+LOCK    ""      15   1  NOTOUCH 1
+UNLOCK  ""      16   1  NOTOUCH 1
+
+MVUP    *       20   2  NOTOUCH 1
+MVDOWN  *       21   2  NOTOUCH 1
+MVLEFT  *       22   2  NOTOUCH 1
+MVRIGHT *       23   2  NOTOUCH 1
+
+LKUP    ""      24   1  NOTOUCH 1
+LKDOWN  ""      25   1  NOTOUCH 1
+LKLEFT  ""      26   1  NOTOUCH 1
+LKRIGHT ""      27   1  NOTOUCH 1
+
+PUSH    @*      30   2  NOTOUCH 1
+PUSH    *       31   3  NOTOUCH 1
+POP     ""      32   1  NOTOUCH 1
+POP     @*      33   2  NOTOUCH 1
+DUP     ""      34   1  NOTOUCH 1
+
+ADD     ""      40   1  NOTOUCH 1
+SUB     ""      41   1  NOTOUCH 1
+MUL     ""      42   1  NOTOUCH 1
+DIV     ""      43   1  NOTOUCH 1
+INC     ""      44   1  NOTOUCH 1
+DEC     ""      45   1  NOTOUCH 1
+
+CLEAR   ""      50   1  NOTOUCH 1
+WRITES  ""      51   1  NOTOUCH 1
+WRITES  *       52   3  NOTOUCH 1
+WRITEN  ""      53   1  NOTOUCH 1
+WRITEC  *       54   2  NOTOUCH 1
+TEXT    ""      55   1  NOTOUCH 1
+MENU    ""      56   1  NOTOUCH 1
+
+EVENT   *       60   3  NOTOUCH 1
+ONTALK  *       61   3  NOTOUCH 1

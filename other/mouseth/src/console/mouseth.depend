@@ -1,0 +1,36 @@
+# depslib dependency file v1.0
+1193914476 c:\haroldo\cpp\mouseth\src\console\main.c
+	<stdio.h>
+	<stdlib.h>
+	"mouseth.h"
+
+1190600961 c:\media\cproj\mouseth\src\console\main.c
+	<stdio.h>
+	<stdlib.h>
+
+1193827416 c:\haroldo\cpp\mouseth\include\mouseth.h
+	"mth_conf.h"
+
+1193828290 c:\haroldo\cpp\mouseth\include\console\mth_conf.h
+
+1192532318 c:\haroldo\cpp\mouseth\src\console\mth_mem.c
+	<stdio.h>
+	<stdlib.h>
+	"mouseth.h"
+
+1193742450 c:\haroldo\cpp\mouseth\src\common\mouseth.c
+	"mouseth.h"
+
+1194346297 c:\haroldo\cpp\mouseth\src\console\mth_sys.c
+	"mouseth.h"
+
+1193828681 c:\haroldo\cpp\mouseth\src\console\mth_err.c
+	<stdio.h>
+	<stdlib.h>
+	"mouseth.h"
+
+1193828440 c:\haroldo\cpp\mouseth\src\console\mth_prog.c
+	<stdio.h>
+	<stdlib.h>
+	"mouseth.h"
+

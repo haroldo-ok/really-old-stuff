@@ -1,0 +1,54 @@
+# Project: rprun
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = ../../../lib/chs_load.o ../../../lib/rpcheese/chs_func.o ../../../lib/chs_intr.o ../../../lib/rpcheese/curses/chs_cons.o ../rprun.o ../../../lib/rpcheese/rpg_mpar.o ../../../lib/rpcheese/curses/rpg_disp.o ../../../lib/rpcheese/rpg_turn.o ../../../lib/rpcheese/stdio/rpg_lchs.o $(RES)
+LINKOBJ  = ../../../lib/chs_load.o ../../../lib/rpcheese/chs_func.o ../../../lib/chs_intr.o ../../../lib/rpcheese/curses/chs_cons.o ../rprun.o ../../../lib/rpcheese/rpg_mpar.o ../../../lib/rpcheese/curses/rpg_disp.o ../../../lib/rpcheese/rpg_turn.o ../../../lib/rpcheese/stdio/rpg_lchs.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib" -lcurses  
+INCS =  -I"C:/Dev-Cpp/include"  -I"../../../../include"  -I"../../../../include/win32"  -I"../../../../include/rpcheese"  -I"../../../../include/rpcheese/curses" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"../../../../include"  -I"../../../../include/win32"  -I"../../../../include/rpcheese"  -I"../../../../include/rpcheese/curses" 
+BIN  = rprun.exe
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS)  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before rprun.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "rprun.exe" $(LIBS)
+
+../../../lib/chs_load.o: ../../../lib/chs_load.c
+	$(CC) -c ../../../lib/chs_load.c -o ../../../lib/chs_load.o $(CFLAGS)
+
+../../../lib/rpcheese/chs_func.o: ../../../lib/rpcheese/chs_func.c
+	$(CC) -c ../../../lib/rpcheese/chs_func.c -o ../../../lib/rpcheese/chs_func.o $(CFLAGS)
+
+../../../lib/chs_intr.o: ../../../lib/chs_intr.c
+	$(CC) -c ../../../lib/chs_intr.c -o ../../../lib/chs_intr.o $(CFLAGS)
+
+../../../lib/rpcheese/curses/chs_cons.o: ../../../lib/rpcheese/curses/chs_cons.c
+	$(CC) -c ../../../lib/rpcheese/curses/chs_cons.c -o ../../../lib/rpcheese/curses/chs_cons.o $(CFLAGS)
+
+../rprun.o: ../rprun.c
+	$(CC) -c ../rprun.c -o ../rprun.o $(CFLAGS)
+
+../../../lib/rpcheese/rpg_mpar.o: ../../../lib/rpcheese/rpg_mpar.c
+	$(CC) -c ../../../lib/rpcheese/rpg_mpar.c -o ../../../lib/rpcheese/rpg_mpar.o $(CFLAGS)
+
+../../../lib/rpcheese/curses/rpg_disp.o: ../../../lib/rpcheese/curses/rpg_disp.c
+	$(CC) -c ../../../lib/rpcheese/curses/rpg_disp.c -o ../../../lib/rpcheese/curses/rpg_disp.o $(CFLAGS)
+
+../../../lib/rpcheese/rpg_turn.o: ../../../lib/rpcheese/rpg_turn.c
+	$(CC) -c ../../../lib/rpcheese/rpg_turn.c -o ../../../lib/rpcheese/rpg_turn.o $(CFLAGS)
+
+../../../lib/rpcheese/stdio/rpg_lchs.o: ../../../lib/rpcheese/stdio/rpg_lchs.c
+	$(CC) -c ../../../lib/rpcheese/stdio/rpg_lchs.c -o ../../../lib/rpcheese/stdio/rpg_lchs.o $(CFLAGS)

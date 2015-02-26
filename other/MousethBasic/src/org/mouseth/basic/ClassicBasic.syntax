@@ -1,0 +1,125 @@
+goal ::= lines;
+lines ::= (line CR)* line CR?;
+
+line ::= numberedline | statements ;
+numberedline ::= number statements ;
+statements ::= statement? (COLON statement)* ;
+
+statement ::= remark
+	|	print
+	|	ifstatement
+	|	forloop
+	|	whileloop
+	|	repeatloop	
+	|	goto
+	|	input
+	|	assignment
+	|	gosub
+	|	return
+	|	clear
+	|	list
+	|	run
+	|	end
+	;
+
+remark		::= REM `char`* ;
+print		::= PRINT printexprlist? ;
+ifstatement ::= IF relexpression THEN? ifbody ;
+forloop		::= FOR var EQ expression TO expression (STEP expression)? CR? (statements|lines)? NEXT var? ;
+whileloop	::= WHILE relexpression CR? (statements|lines)? WEND ;
+repeatloop	::= REPEAT CR? (statements|lines)? UNTIL relexpression ;
+goto		::= GOTO (number|identifier) ;
+input		::= INPUT varlist ;
+assignment  ::= LET? var EQ expression ;
+gosub		::= GOSUB number ;
+return		::= RETURN ;
+clear		::=	CLEAR ;
+list		::= LIST ;
+run			::= RUN ;
+end			::= END ;
+
+ifbody		::= statements else?
+	|	(CR lines?) (ENDIF|else?) 
+	;
+else		::= ELSE (statement|CR lines?) ENDIF? ;
+
+number		::= INTEGER_LITERAL ;
+string 		::= STRING_LITERAL ;
+
+printexprlist ::= (exprlist SEMICOLON?)+;
+exprlist ::= exprelement (COMMA exprelement)* ;
+exprelement ::= (string|expression) ;
+varlist ::= var (COMMA var)* ;
+
+relexpression ::= expression relop expression ;
+
+expression ::= term 
+	|	trueexpression
+	;
+trueexpression ::= expression (PLUS|MINUS) expression  ;
+
+term ::= unary 
+	|	trueterm ;
+trueterm ::= term (MULT|DIV) term ;
+
+unary ::= factor
+	|	minusunary
+	;
+minusunary ::= MINUS factor ;
+factor ::= var | funccall | number | parenfactor ;
+parenfactor ::= LPAREN expression RPAREN ;
+
+relop ::= EQ | NOTEQ | LT | GT | LTEQ | GTEQ ;
+
+funccall ::= IDENTIFIER LPAREN exprlist? RPAREN ;
+var		 ::= IDENTIFIER ;
+
+REM		::= "REM";
+PRINT	::= "PRINT";
+IF		::= "IF";
+THEN	::= "THEN";
+ELSE	::= "ELSE";
+ENDIF	::= "ENDIF"|"END" "IF";
+FOR		::= "FOR" ;
+TO		::= "TO" ;
+STEP	::= "STEP" ;
+NEXT	::= "NEXT" ;
+WHILE	::= "WHILE" ;
+WEND	::= "WEND" ;
+REPEAT	::= "REPEAT" ;
+UNTIL	::= "UNTIL" ;
+GOTO	::= "GOTO"|"GO" "TO";
+INPUT	::= "INPUT";
+LET		::= "LET";
+GOSUB 	::= "GOSUB";
+RETURN	::= "RETURN";
+CLEAR	::= "CLEAR";
+LIST	::= "LIST";
+RUN		::= "RUN";
+END		::= "END";
+
+CR      ::= `newlines`;
+
+COLON	   ::= ':' ;
+SEMICOLON  ::= ';' ;
+COMMA      ::= ',' ;
+LPAREN     ::= '(' ;
+RPAREN     ::= ')' ;
+
+PLUS       ::= '+' ;
+MINUS      ::= '-' ;
+MULT       ::= '*' ;
+DIV        ::= '/' ;
+
+EQ         ::= '=' ;
+NOTEQ      ::= "<>" ;
+LT         ::= '<' ;
+GT         ::= '>' ;
+LTEQ       ::= "<=" ;
+GTEQ       ::= ">=" ;
+
+IDENTIFIER			::= `identifier`;
+INTEGER_LITERAL		::= `integer` ;
+STRING_LITERAL		::= `stringdef` ;
+
+ignored ::= `spaces` ;

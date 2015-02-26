@@ -1,0 +1,10 @@
+<project>
+  <versionNumber>1.0</versionNumber>
+  <programName>Femto Pong</programName>
+  <releaseNotes>A pretty ugly Pong rip-off</releaseNotes>
+  <author>Haroldo de Oliveira Pinheiro</author>
+  <resource id="0" type="BASIC" file="FemtoPong.bas"/>
+  <resource id="1" type="BINARY" file="batnball.til"/>
+  <resource id="2" type="INCLUDE" file="palette1.inc"/>
+  <resource id="3" type="BINARY" file="bkg.til"/>
+</project>

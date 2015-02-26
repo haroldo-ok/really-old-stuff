@@ -1,0 +1,24 @@
+unit test;
+IMPLEMENTATION
+
+procedure writeText(s: String); extern $100;
+
+var x: boolean;
+    y: int;
+    s2: string;
+
+procedure blah();
+var i : int;
+begin
+end blah;
+
+procedure bleh(s: String);
+begin
+    s2 := s;
+end;
+
+Begin
+	LOOP
+		writeText("Hello, World! Test! Test!! Test!!! It works!!! TML2 works!!! Yay!!!");
+	END loop;
+End test;

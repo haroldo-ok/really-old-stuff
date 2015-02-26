@@ -1,0 +1,69 @@
+(.100) ~ TIC-TAC-TOE. YOU (X) VS. THE COMPUTER (O) 
+(.110) (:200) t 
+(.200) ~ 
+(.210) "TIC-TAC-TOE. YOU AGAINST TINY BASIC" n 
+(.220) "YOU ARE X. I AM O." n 
+(.230) "YOU PLAY YOUR TURN BY TYPING THE NUMBER OF A SQUARE." n 
+(.240) 0 (_A). 
+(.250) 0 (_B). 
+(.260) 0 (_C). 
+(.270) 0 (_D). 
+(.280) 0 (_E). 
+(.290) (_O): (_F). 
+(.300) n 
+(.310) "FIRST, " n 
+(.320) "PLEASE TELL ME WHERE THE COLD START IS." n 
+(.330) "IN DECIMAL" n 
+(.340) ?(_I).  
+(.350) (_I): 256 256 * / (_I): =(:if0)(brz) 1 2 + (_X). (:400) t  (:else0) t (.if0) (:200) t (.else0) 
+(.360) (_I): 100 100 * / (_I): =(:if1)(brz) (:330) t  (:else1) t (.if1) [] (.else1) 
+(.370) "NO. NOT HEX.  " n 
+(.380) (:330) t 
+(.400) (_I): 24 + (_P). 
+(.410) (_I): 20 + (_G). 1 (_X). 
+(.410) ?(_A). ?(_B). ?(_C).  
+(.420) "THAT IS " (_I): 4096 / !(_I): (_I): 4096 4096 * / - 256 / !n 
+(.430) "00 IN HEX.  THANKS." n 
+(.440) (:500) t 
+(.6530) &ret& 
+1 2 =(:if2)(brz) (:200) t  (:else2) t (.if2) 
+(:100) t 
+ (.else2) 
+10 20 =(:if3)(brz) 
+(:300) t 
+ (:else3) t (.if3) 
+(:400) t 
+ (.else3) 
+30 40 =(:if4)(brz) 
+(:900) t 
+ (.if4) 
+1 (_A). 10
+(.forL5) d (_A): g(:forX5) (brz)
+(_A): !n
+(_A)i
+(:forL5) t
+(.forX5)(SYS)
+ 
+2 (_B). 20
+(.forL6) d (_B): g(:forX6) (brz)
+(_B): !n
+(_B)i
+(:forL6) t
+(.forX6)(SYS)
+ 
+3 (_A). 30
+(.forL7) d (_A): g(:forX7) (brz)
+(_A): !n
+(_A): 3 + (_A).
+(:forL7) t
+(.forX7)(SYS)
+ 
+(.whileL8) (_B): (_C): < (:whileX8) (brz)
+(_B): 1 + (_B).
+(:whileL8) g
+(.whileX8)
+ 
+(.repeat9)
+(_B): 1 + (_B).
+void (:repeat9) (brz)
+ 

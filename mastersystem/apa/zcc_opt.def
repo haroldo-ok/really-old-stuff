@@ -1,0 +1,11 @@
+
+IF !DEFINED_ANSIstdio
+	defc	DEFINED_ANSIstdio = 1
+ENDIF
+
+
+IF !DEFINED_startup
+	DEFINE DEFINED_startup
+	defc startup=3
+ENDIF
+

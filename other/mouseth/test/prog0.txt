@@ -1,0 +1,57 @@
+(.main) ~ Main
+	~ Quick test
+	"Hello, world!\n"
+	"\"Quotes\"\n"
+	"Outputting number: " 1234 ! n
+	"Outputting negative: " 500_ ! n
+
+	"Testing math... "	
+	320 85 + 405 = (:error) (brz)
+	300 75 - 225 = (:error) (brz)
+	12 25 * 300 = (:error) (brz)
+	1950 35 / 55 = (:error) (brz)
+	1950 35 \ 25 = (:error) (brz)
+	500 _ 0 500 - = (:error) (brz)
+	"Okay, it's working.\n"
+	
+	"Testing logic... "
+	100 100 <` (:error) (brz)
+	100 100 >` (:error) (brz)
+	100 100 = (:error) (brz)
+	100 100 %` (:error) (brz)
+	100 100 g (:error) (brz)
+	100 100 l (:error) (brz)
+	100 200 < (:error) (brz)
+	100 200 >` (:error) (brz)
+	100 200 =` (:error) (brz)
+	100 200 % (:error) (brz)
+	100 200 g` (:error) (brz)
+	100 200 l (:error) (brz)
+	200 100 <` (:error) (brz)
+	200 100 > (:error) (brz)
+	200 100 =` (:error) (brz)
+	200 100 % (:error) (brz)
+	200 100 g (:error) (brz)
+	200 100 l` (:error) (brz)
+	100_ 100 < (:error) (brz)
+	100_ 100 >` (:error) (brz)
+	"Okay, it's working.\n"
+
+	"Type a number: " ? (_A). n
+	
+	"Fibonacci:\n"
+	~ Fibonacci
+	1 1
+	"1 1 "
+(.loop)	
+	(_C). (_B).
+	(_B): (_C): + (_B).
+	(_B): !
+	" "
+	(_C): (_B):
+
+	(_A)j
+	(_A): 0 = (:loop) (brz)
+	(end)
+
+(.error) "BZZZT! Wrong!" (end)

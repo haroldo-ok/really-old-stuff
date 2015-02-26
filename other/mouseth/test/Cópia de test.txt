@@ -1,0 +1,36 @@
+	6 &:& &sto& ~ Defines instruction ":" (Load)
+	7 &.& &sto& ~ Defines instruction "." (Store)
+	8 &+& &sto& ~ Defines instruction "+"
+	9 &-& &sto& ~ Defines instruction "-"
+	10 &l& &sto& ~ Defines instruction "l" (Shift left)
+	11 &r& &sto& ~ Defines instruction "r" (Shift right)
+	12 &|& &sto& ~ Defines instruction "|" (Or)
+	13 &^& &sto& ~ Defines instruction "^" (And)
+	&:quote& &"& &sto& ~ Defines instruction """ (Output string)
+
+	0 &:skip1& &brz& ~ Skips to main program
+
+&.setup_apc&
+	&CODESP&: 2 &sub& : ~ Gets PC from caller
+	&APC&. ~ Sets APC so the code can be read
+	&ret&
+	
+&.inc_apc&	
+	&APC&: 1 &add& &APC&. ~ Increment APC
+	&ret&
+
+&.quote& ~ Instruction """
+	&:setup_apc& &call&
+&.quote_loop&
+	&AUXCODE&: ~ Reads the code
+	&IO& . ~ Writes it to the screen
+	&:inc_apc& &call& ~ Increment APC
+
+	&AUXCODE&: &"& &eq& &:quote_loop& &brz&
+
+	&:inc_apc& &call& ~ Increment APC
+	&ret&
+	
+&.skip1& ~ Main
+	"Hello, world!"
+	&end&

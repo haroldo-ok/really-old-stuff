@@ -1,0 +1,6 @@
+
+IF !DEFINED_startup
+	DEFINE DEFINED_startup
+	defc startup=3
+ENDIF
+

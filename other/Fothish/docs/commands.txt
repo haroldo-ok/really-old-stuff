@@ -1,0 +1,37 @@
+SAM Script is a RPN language, meaning that the operators are put after the operands, 
+instead of between them.
+
+Symbol 	Action
+$ 	Return from subroutine
+<number> 	Push <number> onto stack
++ 	Add
+- 	Subtract
+* 	Multiply
+/ 	Integer divide
+\ 	Remainder
+ ? 	Display menu built from current string buffer
+ ! 	Outputs current string buffer as text
+" 	Write string to string buffer. Special command: \# prints a number from the top of the stack
+<uppercase letter> 	Get variable address
+ . 	Store variable
+: 	Recall variable
+< 	Return 1 if Y < X; else return 0
+= 	Return 1 if Y = X; else return 0
+> 	Return 1 if Y > X; else return 0
+[ 	Skip to matching ] if top of stack is zero
+] 	Skip to matching [ if top of stack is not zero
+~ 	Line comment
+i	Displays an image
+j	Jump to another program
+c	Calls another program (Will return to current program when the instruction $ is found).
+
+Examples:
+
+"Hello, World!"! ~ Writes a message
+"Line
+Break"! ~ Writes a message with a line break.
+1 2 + "Result: \#"! ~ Does a math operation and displays the result.
+3 2 * A. ~ Means: A = 3 * 2
+X: Y: + 3 / Z. ~ Means: Z = (X + Y) / 2
+Z: 0 = [ "Okay"! 0] ~ Displays "Okay" if Z == 0
+3 A. A:[ "\#"! A: 1 - A. A:] ~ Means for (A = 3; A != 0; A--) { print(A); }

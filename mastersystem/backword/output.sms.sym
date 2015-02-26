@@ -1,0 +1,24 @@
+; this file was created with wlalink by ville helin <vhelin@iki.fi>.
+; no$gmb symbolic information for "output.sms".
+0000:0068 main
+0000:0074 Loop
+0000:0077 InitializeHardware
+0000:008d ClearVRAMLoop
+0000:00b6 WriteTilesLoop
+0000:00d3 WriteText
+0000:00de WriteTextLoop
+0000:00f0 EndWriteTextLoop
+0000:00f1 InitializeBackwordVM
+0000:00fa RunBackwordVM
+0000:010a BACKWORD_BOOT
+0000:010c WRITE_TEXT
+0000:012c Message
+0000:0139 PaletteData
+0000:013b PaletteDataEnd
+0000:013b VdpData
+0000:014d VdpDataEnd
+0000:014d FontData
+0000:044d FontDataEnd
+0000:0006 *WLA_SDSC_PRG_AUTHOR_PTR
+0000:0026 *WLA_SDSC_PRG_NAME_PTR
+0000:001a *WLA_SDSC_PRG_NOTES_PTR

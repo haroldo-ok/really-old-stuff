@@ -1,0 +1,15 @@
+&.outnumber&
+	0 &SYS3&. ~ Counter
+	66w
+&.outnumber_01&
+	10 3 &sys& ~ Divide by 10, getting quotient and remainder
+	&:dup& &call& 48 + w
+	&:swap& &call& ~ Swaps quotient and remainder
+	&SYS3&: 1 + &SYS3&. ~ Increment counter	
+~	&:dup& &call& = 0 &:outnumber_01& &brz& ~ Loop if quotient is not zero
+	&SYS&. ~ Discards divider
+&.outnumber_02&
+	48 + w ~ Converts the digit to ASCII and outputs it.
+	&SYS3&: 1 - &SYS3&. ~ Decrement counter	
+	&SYS3&: = 0 &:outnumber_02& &brz& ~ Loop if counter is not zero
+	&ret&

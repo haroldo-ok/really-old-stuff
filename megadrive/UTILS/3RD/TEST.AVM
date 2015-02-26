@@ -1,0 +1,53 @@
+        NOP
+label1:
+        JMP     label1
+        JPZ     label1+1
+        JLZ     label1+2
+        JGZ     label1+3
+        JTBL    label1+4
+        CALL    label1+5
+        RET
+
+        PASS
+        SLEEP   3
+        HALT
+        HIDE
+        SHOW
+        LOCK
+        UNLOCK
+
+        MVUP    1
+        MVDOWN  2
+        MVLEFT  3
+        MVRIGHT 4
+
+        LKUP
+        LKDOWN
+        LKLEFT
+        LKRIGHT
+
+        PUSH    1234
+        PUSH    @01
+        POP
+        POP     @02
+        DUP
+
+        ADD
+        SUB
+        MUL
+        DIV
+        INC
+        DEC
+
+        CLEAR
+        WRITES
+        WRITES  label1
+        WRITEN
+        WRITEC  'X'
+        TEXT
+        MENU
+
+        EVENT   3
+        ONTALK  456
+
+        .END

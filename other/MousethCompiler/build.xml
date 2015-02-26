@@ -1,0 +1,42 @@
+<project name="MousethCompiler" default="dist" basedir=".">
+	<description>
+        Mouseth compiler
+    </description>
+	<!-- set global properties for this build -->
+	<property name="build" location="bin" />
+	<property name="dist" location="dist" />
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+	</target>
+
+	<target name="dist" depends="init" description="generate the distribution">
+		<!-- Create the distribution directory -->
+		<mkdir dir="${dist}" />
+
+		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+		<jar jarfile="${dist}/MousethCompiler-${DSTAMP}.jar" basedir="${build}">
+			<manifest>
+<!--				<attribute name="Built-By" value="${user.name}" /> -->
+				<attribute name="Class-Path" value="." />
+				<attribute name="Main-Class" value="org.mouseth.compiler.Compiler" />
+
+				<section name="common">
+					<attribute name="Specification-Title" value="Mouseth compiler" />
+					<attribute name="Specification-Version" value="${version}" />
+					<attribute name="Specification-Vendor" value="" />
+					<attribute name="Implementation-Title" value="common" />
+					<attribute name="Implementation-Version" value="${version} ${TODAY}" />
+					<attribute name="Implementation-Vendor" value="" />
+				</section>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="clean" description="clean up">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<!-- <delete dir="${build}" /> -->
+		<delete dir="${dist}" />
+	</target>
+</project>

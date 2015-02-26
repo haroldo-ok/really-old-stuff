@@ -1,0 +1,75 @@
+REM COLOR 0, 255, 0, 0
+PALETTE 2
+
+LET Y0 = 0
+LET Y1 = 160
+
+LET X2 = 128
+LET Y2 = 96
+LET X3 = 1
+LET Y3 = 1
+
+SPRITE 0 SIZE 1 2 TILE 128 POS 8 Y0
+SPRITE 1 SIZE 1 2 TILE 128 POS 240 Y1
+SPRITE 2 SIZE 1 1 TILE 132 POS X2 Y2
+
+TILESET 1 384 6
+TILESET 3 16 16
+
+FVM 0 0 bkg_goxy
+FOR A0 = 0 TO 32
+	FVM 16 bkg_out
+NEXT
+
+FVM 0 20 bkg_goxy
+FOR A0 = 0 TO 32
+	FVM 16 bkg_out
+NEXT
+
+WHILE TRUE
+	REM 1P movement
+	IF JOY1 UP LET Y0 = Y0 - 1
+	IF JOY1 DOWN LET Y0 = Y0 + 1
+
+	REM 2P movement
+	IF Y1 > Y2 + 8 LET Y1 = Y1 - 1
+	IF Y1 < Y2 - 32 LET Y1 = Y1 + 1
+
+	REM Ball movement	
+	LET X2 = X2 + X3
+	IF X2 < 0 THEN
+		LET X2 = 0
+		LET X3 = 1
+	ENDIF
+	IF X2 > 248 THEN
+		LET X2 = 248
+		LET X3 = -1
+	ENDIF
+	
+	LET Y2 = Y2 + Y3
+	IF Y2 < 8 THEN
+		LET Y2 = 8
+		LET Y3 = 1
+	ENDIF
+	IF Y2 > 152 THEN
+		LET Y2 = 152
+		LET Y3 = -1
+	ENDIF
+	
+	REM Bounce from 1P Paddle
+	IF (X2 > 8) & (X2 < 16) & (Y2 > Y0 - 8) & (Y2 < Y0 + 32) THEN
+		LET X2 = 16
+		LET X3 = 1
+	ENDIF
+	
+	REM Bounce from 2P Paddle
+	IF (X2 > 232) & (X2 < 240) & (Y2 > Y1 - 8) & (Y2 < Y1 + 32) THEN
+		LET X2 = 232
+		LET X3 = -1
+	ENDIF
+
+	SPRITE 0 POS 8 Y0
+	SPRITE 1 POS 240 Y1
+	SPRITE 2 POS X2 Y2
+	FVM refresh
+WEND

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE CodeBlocks_layout_file>
+<CodeBlocks_layout_file>
+	<File name="main.c" open="1" top="1">
+		<Cursor position="1500" topLine="0"/>
+	</File>
+	<File name="rsc_s.s" open="0" top="0">
+		<Cursor position="424738" topLine="8901"/>
+	</File>
+	<File name="tranceS.c" open="0" top="0">
+		<Cursor position="54" topLine="0"/>
+	</File>
+	<Expand folder="/Sources"/>
+</CodeBlocks_layout_file>

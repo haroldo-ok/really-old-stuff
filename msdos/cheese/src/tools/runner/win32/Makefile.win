@@ -1,0 +1,42 @@
+# Project: cheesrun
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = ../../../lib/chs_load.o ../../../lib/chs_func.o ../../../lib/chs_intr.o ../../../lib/rpcheese/chs_cons.o ../cheese_runner.o $(RES)
+LINKOBJ  = ../../../lib/chs_load.o ../../../lib/chs_func.o ../../../lib/chs_intr.o ../../../lib/rpcheese/chs_cons.o ../cheese_runner.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib"  
+INCS =  -I"C:/Dev-Cpp/include"  -I"../../../../include"  -I"../../../../include/win32" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include"  -I"../../../../include"  -I"../../../../include/win32" 
+BIN  = cheesrun.exe
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS)  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before cheesrun.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "cheesrun.exe" $(LIBS)
+
+../../../lib/chs_load.o: ../../../lib/chs_load.c
+	$(CC) -c ../../../lib/chs_load.c -o ../../../lib/chs_load.o $(CFLAGS)
+
+../../../lib/chs_func.o: ../../../lib/chs_func.c
+	$(CC) -c ../../../lib/chs_func.c -o ../../../lib/chs_func.o $(CFLAGS)
+
+../../../lib/chs_intr.o: ../../../lib/chs_intr.c
+	$(CC) -c ../../../lib/chs_intr.c -o ../../../lib/chs_intr.o $(CFLAGS)
+
+../../../lib/rpcheese/chs_cons.o: ../../../lib/rpcheese/chs_cons.c
+	$(CC) -c ../../../lib/rpcheese/chs_cons.c -o ../../../lib/rpcheese/chs_cons.o $(CFLAGS)
+
+../cheese_runner.o: ../cheese_runner.c
+	$(CC) -c ../cheese_runner.c -o ../cheese_runner.o $(CFLAGS)

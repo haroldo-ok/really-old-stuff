@@ -1,0 +1,72 @@
+unit test;
+IMPLEMENTATION
+
+procedure writeText(s: String); extern $100;
+procedure updateSprites(); extern $104;
+procedure setSprite(sprite, x, y, tile: int); extern $108;
+procedure scrollBkg(x, y: int); extern $10C;
+procedure readJoypad1(): int; extern $110;
+procedure readJoypad2(): int; extern $114;
+procedure andW(a, b: int): int; extern $118;
+procedure orW(a, b: int): int; extern $11C;
+procedure notW(a: int): int; extern $120;
+
+const
+    JOY_UP    = $01;
+    JOY_DOWN  = $02;
+    JOY_LEFT  = $04;
+    JOY_RIGHT = $08;
+    JOY_FIREA = $10;
+    JOY_FIREB = $20;
+
+
+var x, y: int;
+    x2, y2: int;
+    s2: string;
+    Joy: int;
+
+procedure blah();
+var i : int;
+begin
+end blah;
+
+procedure bleh(s: String);
+begin
+    s2 := s;
+end;
+
+procedure xpto(): int;
+begin
+   Return 12;
+end;
+
+Begin
+	x2 := 10;
+	y2 := 10;
+
+	LOOP
+		Joy := readJoyPad1();
+		if andW(Joy, JOY_UP) <> 0 then
+			Dec(y2);
+		end if;
+		if andW(Joy, JOY_DOWN) <> 0 then
+			Inc(y2);
+		end if;
+		if andW(Joy, JOY_LEFT) <> 0 then
+			Dec(x2);
+		end if;
+		if andW(Joy, JOY_RIGHT) <> 0 then
+			Inc(x2);
+		end if;
+		
+		writeText("Hello, World! Test! Test!! Test!!! It works!!! TML2 works!!! Yay!!!");
+		setSprite(0, x, y, 20+readJoypad1());
+		setSprite(1, y, x, 20+readJoypad2());	
+		setSprite(2, x2, y2, 20+readJoypad2());	
+		updateSprites();
+		Inc(x);
+		Inc(y);
+		Inc(y);
+		scrollBkg(-(x / 4), -(y / 4));
+	END loop;
+End test;

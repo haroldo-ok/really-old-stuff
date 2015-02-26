@@ -1,0 +1,154 @@
+String processStatements(Object[] params) {
+	String s = ""; 
+	Object[] pms = util.flatten(params).toArray(); 
+	for (int i = 0; i < pms.length; i++) { 
+		String s2 = pms[i]; 
+		if (!":".equals(s2)) { 
+			s = s + s2 + " "; 
+		} 
+	} 
+	return s;
+}
+
+String processPrint(Object[] params) {
+	String s = ""; 
+	Object[] pms = util.flatten(params).toArray(); 
+	for (int i = 1; i < pms.length; i++) { 
+		String s2 = pms[i]; 
+		if (!",".equals(s2) && !";".equals(s2)) { 
+			s = s + s2 + " "; 
+			if (!s2.startsWith("\"")) { 
+				s = s + "!"; 
+			} 
+		} 
+	} 
+	return s + "n";
+}
+
+String processIf(Object[] params) {
+	n = util.getSequence();
+	ifLbl = "if" + n;
+	elseLbl = "else" + n;
+	
+	body = params[3];
+	ifBody = body.get(0);
+	if (!(ifBody instanceof String)) {
+		ifBody = "\n" + ifBody.get(1);
+	}
+	
+	elseBody = body.get(1);
+	if (elseBody instanceof String) {
+		eb = elseBody.trim();
+		if ("".equals(eb) || "ENDIF".equals(eb)) {
+			elseBody = null;
+		}
+	}
+	
+	s = params[1] + "(:" + ifLbl + ")(brz) " + ifBody;
+	if (elseBody != null) { // If there's an else, add code to skip it
+		s = s + " (:" + elseLbl + ") t"; 
+	}
+	s = s + " (." + ifLbl + ")"; 
+	if (elseBody != null) { // If there's an else, adds its body.
+		s = s + " " + elseBody + " (." + elseLbl + ")"; 
+	}
+	return s;
+}
+
+String processElse(Object[] params) {
+	s = params[1];
+	if (!(s instanceof String)) {
+		s = util.dump(s.toArray(), 0);
+	}
+	return s;
+}
+
+String processFor(Object[] params) {
+	varName = extractVarName(params[1]);
+	initExpression = params[3];
+	finishExpression = params[5];
+	statements = params[8];
+	
+	stepExpression = params[6];
+	if (stepExpression.size() == 0) {
+		stepExpression = null;
+	} else {
+		stepExpression = stepExpression.get(1);
+	}
+	
+	n = util.getSequence();
+	loopLabel = "forL" + n;
+	endLabel = "forX" + n;
+	
+	s = initExpression + " " + varName + "."; // Initializes loop variable
+	s = s + ' ' + finishExpression + '\n'; // The end value is pushed to the stack
+	
+	s = s + "(." + loopLabel + ")"; // Marks for loop start
+	s = s + " d " + varName + ": g"; // Duplicates top of the stack and checks if it is greater or equal to the loop var
+	s = s + "(:" + endLabel + ") (brz)\n"; // Jumps to the end label, if not.
+
+	s = s + statements.trim();
+
+	if (stepExpression == null) {
+		s = s + '\n' + varName + "i\n"; // Increment variable by one unit
+	} else {
+		s = s + '\n' + varName + ": " + stepExpression + " + " + varName + ".\n"; // Increment variable by the defined step
+	}
+	
+	s = s + "(:" + loopLabel + ") t\n"; // Does the loop
+	s = s + "(." + endLabel + ')'; // Marks end of for
+	s = s + "(SYS)\n"; // Discards the endvalue
+	
+	return s;
+}
+
+String processWhile(Object[] params) {
+	loopCondition = params[1];
+	statements = params[3];
+
+	n = util.getSequence();
+	loopLabel = "whileL" + n;
+	endLabel = "whileX" + n;
+	
+	s = "(." + loopLabel + ") "; // Marks start of the loop
+	s = s + loopCondition + " (:" + endLabel + ") (brz)\n"; // Break loop if condition is false
+	
+	s = s + statements.trim();
+	
+	s = s + "\n(:" + loopLabel + ") g\n"; // Do the loop
+	s = s + "(." + endLabel + ")\n"; // Marks end of the loop
+
+	return s;
+}
+
+String processRepeat(Object[] params) {
+	statements = params[2];
+	stopCondition = params[4];
+
+	n = util.getSequence();
+	loopLabel = "repeat" + n;
+	
+	s = "(." + loopLabel + ")\n"; // Marks start of the loop
+
+	s = s + statements.trim();
+	
+	s = s + "\n" + loopCondition + " (:" + loopLabel + ") (brz)\n"; // Continue loop if condition is false
+
+	return s;
+}
+
+String processInputStatement(Object[] params) {
+	String s = ""; 
+	Object[] pms = util.flatten(params).toArray(); 
+	for (int i = 1; i < pms.length; i++) { 
+		String s2 = pms[i]; 
+		if (!",".equals(s2) && !";".equals(s2)) { 
+			s = s + "?" + s2.substring(0, s2.length()-1) + ". "; 
+		} 
+	} 
+	return s;
+}
+
+String extractVarName(String s) {
+	return s.substring(0, s.length()-1);
+}

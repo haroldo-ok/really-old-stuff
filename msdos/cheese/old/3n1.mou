@@ -1,0 +1,14 @@
+~ Multiply by 3 and add 1
+( "!Enter a number (0 terminates) : "
+  ? N: N. 0 > ^                             ~ Read number and check > 0
+  0 C:                                      ~ Initialize counter
+  ( C. 20 \ 0 = [ "!" ]                     ~ New line every 20th number
+    C. 1 + C:                               ~ Count items
+    N. ! " "                                ~ Display an item
+    N. 1 > ^                                ~ Finished if N = 1
+    N. 2 \ 0 = [ N. 2 / M: ]                ~ Item is even
+    N. 2 \ 0 > [ 3 N. * 1 + M: ]            ~ Item is odd
+    M. N:                                   ~ New value for N
+  )
+)
+$

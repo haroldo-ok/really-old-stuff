@@ -1,0 +1,41 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+-->
+
+<!--
+<svg width="100%" height="100%" version="1.1"
+xmlns="http://www.w3.org/2000/svg">
+-->
+<svg width="100%" height="100%" version="1.1">
+<polygon points="212,79 294,80 296,89 " style="fill:#8b8b8b;" />
+<polygon points="212,79 296,89 284,97 " style="fill:#8b8b8b;" />
+<polygon points="212,79 284,97 258,103 " style="fill:#8b8b8b;" />
+<polygon points="212,79 258,103 223,105 " style="fill:#8b8b8b;" />
+<polygon points="212,79 186,103 223,105 " style="fill:#8b8b8b;" />
+<polygon points="212,79 154,96 186,103 " style="fill:#8b8b8b;" />
+<polygon points="212,79 133,87 154,96 " style="fill:#8b8b8b;" />
+<polygon points="126,77 212,79 133,87 " style="fill:#8b8b8b;" />
+<polygon points="132,69 126,77 212,79 " style="fill:#8b8b8b;" />
+<polygon points="149,62 132,69 212,79 " style="fill:#8b8b8b;" />
+<polygon points="174,58 149,62 212,79 " style="fill:#8b8b8b;" />
+<polygon points="203,58 232,60 212,79 " style="fill:#8b8b8b;" />
+<polygon points="232,60 260,64 212,79 " style="fill:#8b8b8b;" />
+<polygon points="260,64 281,71 212,79 " style="fill:#8b8b8b;" />
+<polygon points="281,71 212,79 294,80 " style="fill:#8b8b8b;" />
+<polygon points="296,89 284,97 278,219 " style="fill:#1f1f1f;" />
+<polygon points="284,97 258,103 267,232 " style="fill:#484848;" />
+<polygon points="258,103 223,105 243,242 " style="fill:#8a8a8a;" />
+<polygon points="186,103 223,105 212,246 " style="fill:#c5c5c5;" />
+<polygon points="154,96 186,103 179,243 " style="fill:#e6e6e6;" />
+<polygon points="133,87 154,96 151,235 " style="fill:#dfdfdf;" />
+<polygon points="126,77 133,87 132,222 " style="fill:#a9a9a9;" />
+<polygon points="284,97 278,219 267,232 " style="fill:#2a2a2a;" />
+<polygon points="258,103 267,232 243,242 " style="fill:#5e5e5e;" />
+<polygon points="223,105 243,242 212,246 " style="fill:#a0a0a0;" />
+<polygon points="186,103 179,243 212,246 " style="fill:#d4d4d4;" />
+<polygon points="154,96 151,235 179,243 " style="fill:#e9e9e9;" />
+<polygon points="133,87 132,222 151,235 " style="fill:#d2d2d2;" />
+<polygon points="126,77 126,208 132,222 " style="fill:#8f8f8f;" />
+</svg>

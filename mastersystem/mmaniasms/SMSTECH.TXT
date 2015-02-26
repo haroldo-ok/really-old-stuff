@@ -1,0 +1,965 @@
+       Super Majik Spiral Crew's Guide to the Sega Master System (0.02)
+==============================================================================
+
+Introduction -
+--------------
+
+This manual is made up of information gathered from a document written by a
+person named Jon which was last updated 11/23/93, and a document released by
+Andrew Lindsay of the Sega Master System Preservation Society on 03/03/97
+"http://members.aol.com/smsstuff".  Newest additions to the document are from
+e-mail conversations with James McKay, the author the best Master System
+emulator around, Massage, which we use to do all our testing,
+"http://http://www.users.dircon.co.uk/~dmckay/massage.html".  I also found
+an other small document on programming the Game Gear by Charles Doty from
+"http://www.yab.com/~cdoty/console.html", but most of the information appears
+to be incorrect (or just different on the Game Gear than the Master System),
+but he did have some working code that I modified to work with the Master
+System, and did learn a few things from.
+
+Apparently at some time there were indie programmers working on the Sega
+Master System (SMS) and Game Gear (GG), but now from all my searches on the
+Internet it seems they have all but disappeared.  These programmers must have
+had much more knowledge about the SMS than I have been able to recover if it
+was possible for them to write the games, and from what I have gathered from
+the document by Jon, actually test their games on the hardware.  Actually now
+as a correction to the above statement, I have recovered what I feel is all
+that is needed to write games, it is just a matter of putting the code
+together and figuring out a few small settings.  Although I am no closer to
+being able to test code on the actual SMS.
+
+It is the goal of the Super Majik Spiral Crew (SMSC) to revive this lost
+information first through testing on emulators and finally being able to burn
+EPROM based carts to run on the actual hardware.
+
+Oh, do to mood swings and other untrackable reasons there are a number of
+different ways used to refer to Decimal, Hexadecimal, and Binary numbers.
+
+Decimal are either by them seleves or refered to dirrectly as decimal in the
+text.
+
+Hexadecimal are either preceded by a "$" or "0x", or followed by an "h".
+
+Binary are always followed by a "b" as far as I can remember.
+
+If you have any additional information, corrections, or find anything unclear
+about this document please write to cmeadors@stu.ac.cc.md.us and we'll get you
+fixed right up.
+
+Basic Hardware -
+----------------
+
+The SMS is an 8 bit video game system based around Zilog's Z80 CPU.  The SMS
+has a cartridge slot for games from 128k to 512k and a card slot for credit
+card sized games which are 32k.  Amazing new info from James, he reports that
+Massage has support for 256 16k banks of data in a cartridge which would allow
+4096k (32 megabit) games.  He believes that the orginal SMS may have also had
+this ability.  So, why were there no games bigger than 512k?  If you remember
+what a 4 Mega game cost (70$US), a 8 Mega game would have run almost double
+that.  By the time the cost of game parts came down, the 16 bit systems had
+taken the field.  Oh, to see what a 32 Mega game could have been...perhaps one
+day through SMCS we will.
+
+
+Basic Video -
+-------------
+
+The SMS uses a character-mapped screen.  The internal size of the is 32x28
+characters, while actual the displayed size is variable.  The character are
+8x8 in size, and are used both on screen, and as sprites.  The characters are
+made up of 4 bit planes, allowing for 16 colors.  There are two user definable
+palettes of 16 colors each, one for the characters displayed on the screen,
+and the other for the sprites, this arangement can make for some interesting
+effects with dual palette rotation.  The range of colors available for use in
+the palette is 64, or 6-bit color, or 2-bits per each red, green, and blue
+value.
+
+Up to 448 characters can be defined, arranged as one set of 256, and another
+set of 192.  There can be 64 hardware controled sprites on screen at one time,
+which can be picked from either of the two sets of characters.  Generally the
+sprites are just 8x8 chacters, but there is a video register setting that
+allows for 8x16 sprites made from 2 characters, this is explained more in the
+detailed video section.
+
+Characters printed on the screen may be flipped in either x or y, or both
+dirrections, and additionally can be forced infront or behind sprites.
+Sprites cannot use the flipped characters, which Jon considered a major
+omission, for which he wanted to see someone hurt, I have yet to deturmin
+myself how I feel, but am sure to agree with him.  Basicly flipped characters
+in sprites would have let you make a character in a game walk in either
+dirrection without having to waste two sets of characters.
+
+Hardware scrolling is supported on both the x and y axis, but from what I have
+found so far, it seems to only be in a positive dirrection.  But playing
+almost any game shows the scrolling in both dirrections is possible, but may
+not be done in hardware.  Another problem I have found with the scrolling is
+that the internal screen is the same size (or maybe only 1 pixel larger) as
+the displayed screen, so getting a smooth scroll with out character popup at
+the boarders may be a bit of work.  Only time will tell.
+
+All access to the screen, sprite, character set, and assorted video registers
+is done via ports.  Access to certain parts of video RAM is only reliable
+either on the vertical retrace, or when the screen is switched off.  Again Jon
+is annoyed by this, but not surprised.
+
+Basic Sound -
+-------------
+
+The SMS has a 3 channel tone generator, along with a white noise channel, and
+is mono.  The Japanese Master System called the Mark III also had an FM sound
+chip which is included in some emulations of the SMS.  I have no documentation
+on the FM chip, but am sure someone out there does.  The standard sound chip
+is stated to be much the same as the chips used in the Spectrums and Atari STs
+so I'll be looking for more documentation on those systems to fill in some
+blanks I have about usage of the SMS chip.  James has provided some basic info
+on the FM chip, I know the part name, and Yamaha has a fax back service where
+I can get the tech guide to the chip, so I'll be doing that soon.  Yamaha's
+fax back service is junk!  I'll have to try to get the information some other
+way.
+
+Joysticks -
+-----------
+
+The SMS has 2 joystick ports, with capability for a lightgun.  I have
+absolutely no documentation on the lightgun, and no emulators have support for
+it, so it will be avoided for now.  The joystick is the standard 4 direction
+with 2 fire buttons.  Also readable from the joystick ports is the Reset
+button which was located on the console.  Next to the Reset button on the
+console was the Pause button, but it is not handled on the joystick port.
+
+Reading the joysticks is very easy, save for the fact that many of the devices
+interfaced with the Z80 favored Active Low Logic, and the joysticks are no
+different.  Active Low Logic simply means that 0 is pressed and 1 is released.
+
+To read from a joystick port you just issuse the the command for the Z80 to
+take input from a port.
+
+The port layout looks like this:
+
+Port $DC
+        Bit 0   Joystick 1 Up
+        Bit 1   Joystick 1 Down
+        Bit 2   Joystick 1 Left
+        Bit 3   Joystick 1 Right
+        Bit 4   Joystick 1 Button 1
+        Bit 5   Joystick 1 Button 2
+        Bit 6   Joystick 2 Up
+        Bit 7   Joystick 2 Down
+
+Port $DD
+        Bit 0   Joystick 2 Left
+        Bit 1   Joystick 2 Right
+        Bit 2   Joystick 2 Button 1
+        Bit 3   Joystick 2 Button 2
+        Bit 4   Reset Button
+        Bit 5   Unused
+        Bit 6   Lightgun Sync 1
+        Bit 7   Lightgun Sync 2
+
+It is noted that some games seem to write to ports $DE and $DF, but the reason
+is yet unknown.
+
+Pause Button -
+--------------
+
+The Pause button on the SMS is not readable.  Instead when pressed, a NMI is
+generated forcing the processor to push the PC register to the stack, and jump
+to offset 0066h.  At 0066h the program usually pushes AF, performs some tests
+on a memory location, perhaps to see if the game is running, and then restores
+the AF register and Returns from the NMI.  After a bit of investigation, and a
+short conversation with James I have the complete skinny on the Pause Button.
+The pause button does nothing other than what is stated above.  So how does it
+pause a game?  How do you keep a game from pausing the title screen?  How do
+you included Easter Eggs that use the pause button?  Simple, you code them.
+As stated when the pause button is pressed, the program jumps to 0066h.  At
+that location you have to include code that changes something in the user RAM
+that the program can test to see if the game should be paused.  Because the
+system does nothing different on pause and unpause, you probally should just
+complement a the value in RAM, so it flops back and forth with the pause.  The
+test probally should be done in your vertical blank routine so the pause is
+checked often.  If the test is passed, you should turn off all the sound
+channels (so you don't hold the last note played the whole time the game is
+paused), and then just go into a loop the keeps checking the pause status and
+exit the loop when the game is no longer paused.
+
+Ports -
+-------
+
+$3F - Language detect?
+$DC - Joystick
+$DD - Joystick
+$DE - Unknown
+$DF - Unknown
+$7E - Sound
+$7F - Sound
+$BE - Video data
+$BF - Video registers
+$F0 - FM Sound register
+$F1 - FM Sound data
+$F2 - FM Sound detect
+
+
+Detailed Sound -
+----------------
+
+As mentioned before the sound chip is capable of generating 3 tones
+simultaneously, each with individually selectable frequency and volume.
+Additionally it can generate white noise, with user definable "type" and
+volume.  The sound chip can be accessed via ports $7E and $7F, with no
+discernable difference.  Though from this point on, $7F will always be used
+as the sound port.  
+
+With 10 bits for frequency there are 1024 steps avaible.  Unknown is what the
+starting frequency is, what the ending frequency is, and how wide the steps
+are.  Also unknown is if the frequency uses active low or active high logic.
+Though the volume uses active low, it can be assumed that the high frequency
+will be all 0s and the low frequency will be all 1s.
+
+To set the frequency of one of the tone channels you must write two bytes to
+the port:
+
+Byte 1
+        Bit 0   \
+        Bit 1    | 4 least significant bits
+        Bit 2    | of the frequency
+        Bit 3   /
+
+        Bit 4   \  000 = Channel 1
+        Bit 5    | 010 = Channel 2
+        Bit 6   /  100 = Channel 3
+
+        Bit 7   1
+
+Byte 2
+        Bit 0   \
+        Bit 1    |
+        Bit 2    | 6 most significat bits
+        Bit 3    | of the frequency
+        Bit 4    |
+        Bit 5   /
+
+        Bit 6   Unused
+        Bit 7   Unused
+
+All other sound settings only require 1 byte to be written to the port.
+
+With only 4 bits for volume that means there are only 16 steps avaible.  The
+lowest volume is off, and the highest is on, so the steps looking something
+like 0%, 7%, 13%, 20%, 27%, 33%, 40%, 47%, 53%, 60%, 67%, 73%, 80%, 87%, 93%,
+and 100%.  Actually you'd be quite amazed how smooth a volume fade can sound
+even with only 16 steps.
+
+To change the volume of one of the tone channels write the following byte to
+the port:
+
+Byte 1
+        Bit 0   \
+        Bit 1    | 4 bits to define volume
+        Bit 2    | 0000 = loudest, 1111 = off
+        Bit 3   /
+
+        Bit 4   \  001 = Channel 1
+        Bit 5    | 011 = Channel 2
+        Bit 6   /  101 = Channel 3
+
+        Bit 7   1
+
+With 3 bits for the noise type there are 8 possibilities for different noise
+types, what is unknown is what exactly these noise types are.  Even if we can
+get some working code to listen to the noise on a emulated system, it still
+may not tell us much because none of the emulators do the noise channel right
+yet.
+
+To change the type of noise, write the following byte to the port:
+
+Byte 1
+        Bit 0   \  3 bits to define
+        Bit 1    | noise type 0-7
+        Bit 2   /
+
+        Bit 3   Unused
+
+        Bit 4   0
+        Bit 5   1
+        Bit 6   1
+        Bit 7   1
+
+Here is a bit of information from James on the noise channel of the SMS, along
+with a note or two about how it is emulated by Massage:
+
+Bit 2:
+White noise=1, Synchronous noise=0.
+
+Bit 1,0:
+
+Bin  Frequency
+--------------
+00 : Clock/16
+01 : Clock/32
+10 : Clock/64
+11 : Frequency is taken from tone generator 3.
+
+Note : Clock is 110Khz.
+
+White noise is the only setting that is emulated, and all 8 are exactly the 
+same on the Adlib card, since it doesn't allow you to change the frequency of 
+the snare drum.
+
+Synchronous noise is described in the official manual as "a 6.25% duty pulse 
+waveform", but I don't think I've seen anything that actually used it.
+
+Again the same 16 volume steps apply to the noise channel.  Actually this
+description probally could have been included with the tone channels, as the
+only thing that is different is the channel specification bits.
+
+To change the volume of the noise channel write the following byte to the
+port:
+
+Byte 1
+        Bit 0   \
+        Bit 1    | 4 bits to define volume
+        Bit 2    | 0000 = loudest, 1111 = off
+        Bit 3   /
+
+        Bit 4   1
+        Bit 5   1
+        Bit 6   1
+        Bit 7   1
+
+I'm going to do a brief run down of the byte formation for the different
+sound chip settings, so you can see how the different setting relate, and
+perhaps get some ideas on how to code them.
+
+
+                    | Byte 1 | Byte 2 | Byte 1 |    Byte 2
+      Setting       |76543210|76543210|  Hex   |      Hex
+--------------------|--------|--------|--------|---------------
+Channel 1 Frequency |1000xxxx|11xxyyyy|8x x=0-F|xy x=C-F, y=0-F
+Channel 1 Volume    |1001xxxx|nnnnnnnn|9x x=0-F|Unused
+Channel 2 Frequency |1010xxxx|11xxyyyy|Ax x=0-F|xy x=C-F, y=0-F
+Channel 2 Volume    |1011xxxx|nnnnnnnn|Bx x=0-F|Unused
+Channel 3 Frequency |1100xxxx|11xxyyyy|Cx x=0-F|xy x=C-F, y=0-F
+Channel 3 Volume    |1101xxxx|nnnnnnnn|Dx x=0-F|Unused
+Noise Channel Type  |1110nxxx|nnnnnnnn|Ex x=0-7|Unused
+Noise Channel Volume|1111xxxx|nnnnnnnn|Fx x=0-F|Unused
+
+x = Varible, y= Varible, n = Not Used
+
+In the case of a not used bit in the first byte I'd set it to 0 for ease of
+math, but in the case of the second byte, if all bits aren't used, you just
+don't write that byte cause it isn't required, and if you did write it funny
+things would start coming out of the speaker, actually if you write all 0s
+probally nothing would happen, as that isn't a valid command.
+
+To use FM chip on the Mark III:
+(Port info from James, data format from SCCOPLL.TXT from Marat's MSX page)
+
+I/O port $F0    FM chip register address.
+         $F1    FM chip data address.
+         $F2    Use to detect the presence of the FM chip (not sure how).
+
+1 clock cycle needed after writing to $F0.
+7 clock cycles wait needed after writing $F1.
+(use NOPs or do something else with your time)
+
+Mark III FM registers:
+
+Reg. | Bit 7 | Bit 6 | Bit 5 | Bit 4 | Bit 3 | Bit 2 | Bit 1 | Bit 0 |
+-----|-------|-------|-------|-------|-------|-------|-------|-------|--------
+00h  |  AM   |  VIB  | EGTYP |  KSR  |          MULTIPLE             |  (MOD)
+01h  |  AM   |  VIB  | EGTYP |  KSR  |          MULTIPLE             |  (CAR)
+02h  |      KSL      |               TOTAL LEVEL                     |  (MOD)
+03h  |      KSL      |       |  DM   |  DC   |      FEEDBACK         |  (CAR)
+04h  |           ATTACK RATE         |          DECAY RATE           |  (MOD)
+05h  |           ATTACK RATE         |          DECAY RATE           |  (CAR)
+06h  |          SUSTAIN LEVEL        |        RELEASE RATE           |  (MOD)
+07h  |          SUSTAIN LEVEL        |        RELEASE RATE           |  (CAR)
+0Eh  |       |       | RHYTHM|  BD   |  SD   |  TOM  |TOP-CY |  HH   |
+10h  |                     F-Number (Low 8 bits)                     | Chan 1
+11h  |                     F-Number (Low 8 bits)                     | Chan 2
+12h  |                     F-Number (Low 8 bits)                     | Chan 3
+13h  |                     F-Number (Low 8 bits)                     | Chan 4
+14h  |                     F-Number (Low 8 bits)                     | Chan 5
+15h  |                     F-Number (Low 8 bits)                     | Chan 6
+16h  |                     F-Number (Low 8 bits)                     | Chan 7
+17h  |                     F-Number (Low 8 bits)                     | Chan 8
+18h  |                     F-Number (Low 8 bits)                     | Chan 9
+20h  |       |       |SUS-ON |KEY-ON |         BLOCK         |F-No.Hi| Chan 1
+21h  |       |       |SUS-ON |KEY-ON |         BLOCK         |F-No.Hi| Chan 2
+22h  |       |       |SUS-ON |KEY-ON |         BLOCK         |F-No.Hi| Chan 3
+23h  |       |       |SUS-ON |KEY-ON |         BLOCK         |F-No.Hi| Chan 4
+24h  |       |       |SUS-ON |KEY-ON |         BLOCK         |F-No.Hi| Chan 5
+25h  |       |       |SUS-ON |KEY-ON |         BLOCK         |F-No.Hi| Chan 6
+26h  |       |       |SUS-ON |KEY-ON |         BLOCK         |F-No.Hi| Chan 7
+27h  |       |       |SUS-ON |KEY-ON |         BLOCK         |F-No.Hi| Chan 8
+28h  |       |       |SUS-ON |KEY-ON |         BLOCK         |F-No.Hi| Chan 9
+30h  |            INST               |           VOL                 | Chan 1
+31h  |            INST               |           VOL                 | Chan 2
+32h  |            INST               |           VOL                 | Chan 3
+33h  |            INST               |           VOL                 | Chan 4
+34h  |            INST               |           VOL                 | Chan 5
+35h  |            INST               |           VOL                 | Chan 6
+36h  |            INST               |           VOL                 | Chan 7
+37h  |            INST               |           VOL                 | Chan 8
+38h  |            INST               |           VOL                 | Chan 9
+
+When RHYTHM mode:
+
+36h  |       |       |       |       |          BASS DRUM LEVEL      |
+37h  |         HIHAT LEVEL           |         SNARE DRUM LEVEL      |
+38h  |         TOM-TOM LEVEL         |         TOP-CYMBAL LEVEL      |
+
+VIB: frequency vibration ON/OFF.
+AM: amplitude moduration ON/OFF.
+EGTYP: 1 - DECAYING envelop pattern, 0 - SUSTAINING envelop pattern.
+DM: rectification to output of modulator opelator ON/OFF.
+DC: rectification to output of carrier opelator ON/OFF.
+RHYTHM: RHYTHM mode ON/OFF. (Channels 7, 8, and 9 are used for rhythm)
+
+BLOCK: octave data
+F-Number: (frequency * 2^18 / 50000) / 2^(BLOCK-1)
+
+INST: Voice number:
+	 0 User		 1 Violin	 2 Guitar	 3 Piano
+	 4 Flute	 5 Clarinet	 6 Oboe		 7 Trumpet
+	 8 Organ	 9 Tube		10 Synthesizer	11 Harpsicode
+	12 Vibraphone	13 Synth bass	14 Wood bass	15 Elec. bass
+
+There is still much missing data on the FM chip, but this is a start.
+
+Detailed Video -
+----------------
+
+The video chip also uses two ports, but unlike the sound chip the two ports in
+this case do different things.  There is an address port $BF, and the other
+is the data port $BE.  Before writing to, or reading from video RAM it is
+necessary to set the video address.  This is accomplished by writing the low
+byte and then the high byte of the address to port $BF.
+
+The actual amount of video RAM is questionable.  I would be think that 64k
+would be a good guess except for the way the registers are used, it could be
+that the registers are in video memory (a very good chance) but just are used
+differently.
+
+Well anyway, here is the Video RAM map as best as I can figure:
+
+Bytes   Area            Notes
+
+8k      0000h-1FFFh     The first 256 characters can be read from here.
+
+6k      2FFFh-37FFh     The last 192 character definations read from here.
+
+1.5k    3800h-3DFFh     Screen memory, can read from here to find out what
+                        character is in what location on the screen.
+
+256     3E00h-3EFFh     Alternate read area for the sprite table?
+
+64      3F00h-3F3Fh     Read area for the sprite table, contains the 64 sprite
+                        Y coordinates.
+
+64      3F80h-3F7Fh     64 unused bytes, read as you will.
+
+128     3F80h-3FFFh     64 (sprite X coord, sprite character) pairs can be
+                        read from here.
+
+8k      4000h-5FFFh     The first 256 characters should be written here.
+
+6k      6000h-77FFh     The last 192 character definations written here.
+
+1.5k    7800h-7DFFh     Screen memory, writing here is how you display the
+                        different characters on the screen.  Explained more
+                        later.
+
+256     7E00h-7EFFh     Alternate area for spirte tables?  Well anyway using
+                        one of the registers you can point the sprite table
+                        here, could be used for some quick screen changes.
+
+64      7F00h-7F3Fh     Start of the default sprite table.  64 sprite Y
+                        coordinates.
+
+64      7F80h-7F7Fh     64 Unused bytes.  Take as you will.
+
+128     7F80h-7FFFh     64 (sprite X coord, sprite character) pairs.
+
+16k     8000h-BFFFh     Unknown.  To at least 8AFF shares the addresses with
+                        with the registers, above also mirrors the screen
+                        memory, but shouldn't be read or written.
+
+16      C000h-C00Fh     Character color palette, explained more later.
+
+16      C010h-C01Fh     Sprite color palette, also explained later.
+
+?       C020h-?         Unknown.  Totally Unknown!
+
+One thing that I find very nice is that writing to the data port causes the
+video address to auto-increment, so large blocks of data may be written once
+the initial video address is set.  Extra nice about this is the Z80 has plenty
+of auto-incrementing and repeating commands for coping data from one place to
+another.  Reading from video RAM is also possible, although Jon's document
+says to ignore the first byte read from the data port, this reason for this
+is unknown, and I am interested in what that first byte contains.  Again the
+video address will auto-increment after each read.
+
+Accessing any video RAM should be restricted to either the vertical retrace
+period, or when the screen is switched off.  During the vertical retrace it is
+estimated that you can write 384 bytes which is enough to redefine 12
+characters, definatly enough to change both color palettes, or change the
+location of all the sprites on screen.
+
+As mentioned before going along with the video RAM, there are also a number of
+registers, which have different effects on the display.  Jon's document says
+that these registers are Write-Only.  To set a register you just write the
+value of the byte to be set to the video address port $BF, followed by the
+number of the register to the same port.  This is the same as setting the
+address when doing a data write, but in this case there is nothing written to
+the data port, and the effect of setting the address port is seen right away.
+So even though the registers seem to reside in the video RAM them seem to be
+handled totally differenly by the system.  Also because there is no real
+access to video RAM the registers can be set at any time, so some special
+effects can be managed.
+
+The following Register descriptions are taken almost dirrectly from Jon's doc,
+as I didn't feel like retyping most of this.  Some changes have been made for
+clarity, and to remove references to the Game Gear as that is not the focus of
+my document.  So for the next part here, "I" refers to Jon.
+
+Register 80h
+        Bit 0   Screen sync off
+        Bit 1   Normal or enable stretch screen
+        Bit 2   Causes graphics change (related to screen addr?)
+        Bit 3   Shift sprites left by 1 character
+        Bit 4   Horizontal interupts enable
+        Bit 5   Display extra column on LHS of screen
+        Bit 6   Top 2 rows of screen horizontal non-scrolling (Master System)
+        Bit 7   Right side of screen vertical non-scrolling (Master System)
+
+The stretch screen option is really isn't too useful.  Make of bit 2 what you
+will, but you'll probably find that you should set it anyway.  Likewise with
+bit 5.  Bits 6 will give you a two character high panel at the top of the
+screen that is unaffected by the horizontal scroll.  Bit 7 will give you a
+wide panel on the right hand side of the screen that is unaffected by the
+vertical scroll.  Info on Bit 4 was provided by James McKay, but he warns that
+the H interrupts are the most inaccurate parts of the emulator, don't expect 
+there to be any more beyond line 191 (although there is).
+
+
+Register 81h
+        Bit 0   Double sized pixels in sprites
+        Bit 1   8x16 sprites
+        Bit 2   0?
+        Bit 3   Stretch screen by 6 rows (Master System)
+        Bit 4   Stretch screen by 4 rows (Master System)
+        Bit 5   Vertical interrupts enable
+        Bit 6   Screen enable
+        Bit 7   0?
+
+Bit 0 causes all pixels in sprites to double in size, so that each 8x8
+character sprite takes up 16x16 pixels.  Alas this applies to ALL sprites, so
+its usefulness it doubtful.  Bit 1 allows you to use 8x16 sprites, which IS
+useful.  Instead of just one 8x8 appearing at each sprite coordinate, the
+character immediately after the desired one will appear directly below the
+original sprite.  Using this mode does limit you to using even character
+numbers only.  Stretching the screen by 6 rows is not recommended, as it does
+not appear to be a supported mode on the convertor on the Mega-Drive, one can
+only assume that this mode is not officially acknowledged by Sega.  I am given
+to understand that stretching the screen by 4 rows will work on a convertor,
+but with any stretched screen mode you have less characters.
+
+You must set bit 5 and put the Z80 in interrupt mode 1 with interrupts enabled
+in order to get interrupts on the vertical retrace. If you disable the screen
+by clearing bit 6 you can have unlimited access to video RAM.  James also
+corrects that Bit 5 is only for Vertical Interupts, not just general screen
+interupts.  The SMS generates one V interupt for every screen field, on the
+interlaced TVs of the world there are two fields for every full frame.  That
+translates into 60 V blanks per second on NTSC and 50 on PAL (I guess also
+SECAM, but who cares about the French).  Using the V blank for timing will
+make games run slower on European systems, but that is usually the way it is
+done.  Emulation Note:  Massage emulates a PAL SMS, so the speed should be set
+to 117% for 60 V blanks a second.
+
+Register 82h
+        Bit 0   0?
+        Bit 1   \
+        Bit 2    | Address of screen in video RAM
+        Bit 3   /
+        Bit 4   0?
+        Bit 5   0?
+        Bit 6   0?
+        Bit 7   0?
+
+Bits 1,2,3 control the address of the screen in video memory.  The screen is
+1.5k in size, and can apparently be moved.  Setting this register to 0Eh gives
+us the screen at 7800h, which seems pretty sensible to me.  I have no idea
+what the other bits do, if anything.
+
+Register 83h
+        Bit 0   1?
+        Bit 1   1?
+        Bit 2   1?
+        Bit 3   1?
+        Bit 4   1?
+        Bit 5   1?
+        Bit 6   1?
+        Bit 7   1?
+
+This register is a complete mystery.  However, setting it to FFh seems to have
+no adverse side effects at the moment.
+
+Register 84h
+        Bit 0   1?
+        Bit 1   1?
+        Bit 2   1?
+        Bit 3   1?
+        Bit 4   1?
+        Bit 5   1?
+        Bit 6   1?
+        Bit 7   1?
+
+I'm sure this register is related to 83h. Again for safety I set it to FFh.
+By messing with registers 83h and 84h and setting or clearing unknown bits in
+other registers I have had a sort-of bitmap mode, although I have had no luck
+in finding any sensible way to control it.  Oh, for the official spec!! What
+interesting and enlightening reading that would be....
+
+Register 85h
+        Bit 0   1
+        Bit 1   \
+        Bit 2    |
+        Bit 3    | Address of sprite table in video RAM
+        Bit 4    |
+        Bit 5    |
+        Bit 6   /
+        Bit 7   1
+
+This register controls the address of the sprite table in video memory.
+Usually this is set to 7Fh, so that the table is at 7F00h, but writing
+alternate values will alter the address of the sprite table accordingly.
+
+James Corrects:
+Bits 6-1 represent A13-A8, bit 7 and bit 0 are set to 1, so:
+
+Data 0x81 Base 0x0000
+Data 0xFF Base 0x3F00
+
+
+Register 86h
+        Bit 0   0?
+        Bit 1   0?
+        Bit 2   Controls which set of characters is used for sprites
+        Bit 3   0?
+        Bit 4   0?
+        Bit 5   0?
+        Bit 6   0?
+        Bit 7   0?
+
+Writing 0 to bit 2 allows you to use the set of 256 characters as sprites,
+writing 1 allows you to use the set of 192 characters as sprites.  The other
+bits don't seem to have an effect, although I could be wrong..
+
+Register 87h
+        Bit 0   \
+        Bit 1    | Border color [0..15] from sprite palette
+        Bit 2    |
+        Bit 3   /
+        Bit 4   0?
+        Bit 5   0?
+        Bit 6   0?
+        Bit 7   0?
+
+Bits 0-3 control the border color, which is taken from the sprite palette.
+Bits 4-7 seemingly have no use.
+
+Register 88h
+        Bit 0   \
+        Bit 1    |
+        Bit 2    |
+        Bit 3    | Horizontal scroll
+        Bit 4    |
+        Bit 5    |
+        Bit 6    |
+        Bit 7   /
+
+This register controls the horizontal scrolling.  You may write a value from
+0 to 255, and the screen display will be affected immediately.  You can write
+to this at different times during the display period to get raster splits.
+
+Register 89h
+        Bit 0   \
+        Bit 1    |
+        Bit 2    |
+        Bit 3    | Vertical scroll
+        Bit 4    |
+        Bit 5    |
+        Bit 6    |
+        Bit 7   /
+
+This register controls the vertical scrolling.  Values from 0 to 223 are
+valid.  Again you can write to it any time you fancy.
+
+Register 8Ah
+        Bit 0   \
+        Bit 1    |
+        Bit 2    |
+        Bit 3    | No of pixels apart you want interrupts
+        Bit 4    |
+        Bit 5    |
+        Bit 6    | 
+        Bit 7   /
+
+You can generate interrupts on any given raster line with a bit of effort.  If
+you just want an interrupt on the vertical blank period then write FFh to this
+register and we'll say no more about it.  However, the adventurous amongst you
+may like to write a number between 0 and 127 to this port.  This will generate
+an interrupt that number of pixels apart.  So, it's then quite easy to get a
+rock solid raster-split.  Firstly write FFh to the register, when you get the
+interrupt on the vertical blank write a different number to the register.
+When you get that interrupt alter the x-scroll or whatever, and then write FFh
+to the register to make sure you get the next interrupt on the vertical blank.
+Yes, it's a little bit of a hassle, but it will work!
+
+Thank you Jon!  In the future as I get more things working, I will attemt to
+clarify, verify, and uncover as much as I can about these registers myself.
+
+
+Character Data Format -
+-----------------------
+
+The characters on the SMS are made from 4 bit planes allowing for 16 colors
+per pixel.
+
+To keep this description short I will only be explaining one row of a
+character, remember when building actual characters you need 8 rows.
+
+There are 4 bytes per row, one for each plane.  Bit 7 is for pixel 1, and Bit
+0 is for pixel 8.  This may seem a bit strange, but if you look at how it
+works for a second it makes a lot of sense.  If you take the total of the 4
+bits in one position, that will give you the color of that pixel.
+
+Example 1 (16 color):
+
+FEDC3210
+
+Each value above stands for one pixel in a row, that 4 bytes you would write
+would be:
+
+Plane 1:  1 0 1 0 1 0 1 0 = AA
+Plane 2:  1 1 0 0 1 1 0 0 = CC
+Plane 3:  1 1 1 1 0 0 0 0 = F0
+Plane 4:  1 1 1 1 0 0 0 0 = F0
+         -----------------
+          F E D C 3 2 1 0
+
+Thus, writing AAh, CCh, F0h, and F0h to the data port would set one row of a
+charater to those colors.
+
+Example 2 (8 color):
+
+76543210
+
+Plane 1:  1 0 1 0 1 0 1 0 = AA
+Plane 2:  1 1 0 0 1 1 0 0 = CC
+Plane 3:  1 1 1 1 0 0 0 0 = F0
+Plane 4:  0 0 0 0 0 0 0 0 = 00
+         -----------------
+          7 6 5 4 3 2 1 0
+
+Thus, writing AAh, CCh, F0h, and 00h to the data port would set one row of a
+charater to those colors.  The last byte will always be 00h if you aren't
+using colors above 7.  So you can set up code to load 8 color characters and
+save 1 byte of storage per line of each character.
+
+Example 3 (4 color):
+
+32103210
+
+Plane 1:  1 0 1 0 1 0 1 0 = AA
+Plane 2:  1 1 0 0 1 1 0 0 = CC
+Plane 3:  0 0 0 0 0 0 0 0 = 00
+Plane 4:  0 0 0 0 0 0 0 0 = 00
+         -----------------
+          3 2 1 0 3 2 1 0
+
+Thus, writing AAh, CCh, 00h, and 00h to the data port would set one row of a
+charater to those colors.  The last two bytes will always be 00h if you aren't
+using colors above 3.  So you can set up code to load 4 color characters and
+save 2 bytes of storage per line of each character.
+
+Example 4 (2 color):
+
+10101010
+
+Plane 1:  1 0 1 0 1 0 1 0 = AA
+Plane 2:  0 0 0 0 0 0 0 0 = 00
+Plane 3:  0 0 0 0 0 0 0 0 = 00
+Plane 4:  0 0 0 0 0 0 0 0 = 00
+         -----------------
+          3 2 1 0 3 2 1 0
+
+Thus, writing AAh, 00h, 00h, and 00h to the data port would set one row of a
+charater to those colors.  The last three bytes will always be 00h if you
+aren't using colors above 1.  So you can set up code to load 2 color
+characters and save 3 bytes of storage per line of each character.  Really
+only 2 and 16 color characters are the most useful, but seeing things
+explained will give you the best grasp on how the SMS stores characters.
+
+Character Displaying -
+----------------------
+
+Writing to the screen is very simple, if a little slow.  Firstly set the video
+address to point to the part of the screen you wish to write to, defaulting
+from 7800h to 7DFFh, which if you notice is 1536 bytes, which is 64x24, which,
+lastly, is 32 characters across with two bytes to define them (as explained
+next) and 24 characters down.  As mentioned before stretching the screen isn't
+that good of an idea, cause the screen gets more rows, but you don't have any
+more video RAM to map the characters to.  The second byte is the status byte
+defined as followed:
+
+        Bit 0   Write 0 to use low 255 chars, 1 to use top 192
+        Bit 1   X-flip character
+        Bit 2   Y-flip character
+        Bit 3   Printed on foreground color
+        Bit 4   0 = print behind sprites, 1 = print infront of sprites
+        Bit 5   \
+        Bit 6    | Unknown
+        Bit 7   /
+
+Palette Details -
+-----------------
+
+The SMS has a total of 64 colors, from which you can choose 16 for the
+characters (video RAM C000h-C00Fh), and a second 16 for the sprites (video RAM
+C010h-C01Fh).  What is unknown is how to get a tranparent color for use on
+sprites so they don't have to be made from 8x8 solid squares.  My guess would
+be that the transparent color is either palette entry 0 or 15.  Also unknow is
+if the screen characters can also have transparent parts, I would think not.
+Each color is defined as a byte:
+
+        Bit 0   \ Red value
+        Bit 1   / 0-3
+
+        Bit 2   \ Green value
+        Bit 3   / 0-3
+
+        Bit 4   \ Blue value
+        Bit 5   / 0-3
+
+        Bit 6   Unused/Unknown
+        Bit 7   Unused/Unknown
+
+System Memory Map-
+------------------
+
+This is James' reply to a question I asked about memory paging and how to load
+a game larger than 32k.  What he gave in return was a great deal of insight
+into the SMS memory map.  The actual map was edited a bit by me to match the
+layout that has been used so far in the document.
+
+Bytes   Area            Notes
+
+1k      0000h-03FFh     First 1k of ROM always, not swapped with Page 0
+                        (not properly emulated by Massage, see below)
+
+15k     0400h-3FFFh     Page 0
+
+16k     4000h-7FFFh     Page 1
+
+16k     8000h-BFFFh     Page 2 or Batery Backed RAM
+
+8k      C000h-DFFFh     User RAM
+
+8176    E000h-FFEFh     Mirror of most of the 8k user RAM
+                        (but isn't complete and is reserved and shouldn't
+                        be used).
+
+16      FFF0h-FFFFh     Reserved for banking/future expansion
+
+By default Page 0 is bank 0, and Page 1 is bank 1 within the emulator, giving 
+you the first 32k.  So cards (32k) games don't need to set paging information.
+
+0xFFFC:
+Battery backed ram:
+bit 7-4 - no known function.
+bit 3: 16K RAM or ROM at Page 2. (0=ROM, 1=RAM).
+bit 2: Which 16k page (0=first, 1=second).
+bit 1-0 - no known function.
+
+If RAM is paged in, then it has priority over the ROM, until the RAM is paged 
+out again.
+
+For the following, all values poked are ANDed (within the emulator) to keep 
+them within the legal range of banks, so make the rom length a power of two, 
+ie:
+
+64k.
+128k.
+256k.
+512k.
+
+Also 384K which is a special case.  Technically Massage could also handle 
+files of 1024K, 2048K and 4096K, but this has never been tried, and it is not 
+known if a real sms could do it.  It would be interesting though...
+
+If you want bank X, then poke X into one of the following addresses, simple 
+as that.  Bank X starts at offset (X*16384) in the rom file.
+
+0xFFFD:
+Selects bank to go into Page 0.
+NOTE : Only 15k from 0x0400 to 0x3FFF.
+
+The reason for this is that you cannot be sure on power up which banks are 
+in, so the first 1k is always locked to the first 1k of bank 0.  Even worse, 
+Massage doesn't emulate this and will swap the whole 16k, I haven't seen any 
+game which uses this, so I've got away with it so far.  If you do intend to 
+use this make sure that you take this into consideraton.
+
+0xFFFE:
+Selects bank to go into Page 1.  All 16k.
+
+0xFFFF:
+Selects bank to go into Page 2.  All 16k.
+
+So, you have 48K of ROM accessable at a time, followed by 8K of RAM.
+
+0xFFFC to 0xFFFF can also be read, so that you know which page is in (usually 
+used in interrupt routines).
+
+
+Other Unknown Junk -
+--------------------
+
+James McKay came through and answered all the unknown junk from the last
+version.
+
+The only things I can think of that I would like to know now are:
+
+The data format for the FM chip.
+
+How to play digitized sounds, like in Alex Kidd:  The Lost Stars, and Space
+Harrier.  (James did end up giving me a bit of information on this, more just
+a theory on how it is done.
+
+Document Informaton -
+---------------------
+
+There this thing is ready for publication!!!
+
+Document mostly written by:
+        Neon Spiral Injector (cmeadors@stu.ac.cc.md.us)
+
+Super Majik Spiral Crew web site:
+        Club Neon - Student (http://stu.ac.cc.md.us/~cmeadors/smsc)
+
+You may use this document any way you wish.  I would like if you mentioned the
+SMSC in any derived works, but that is up to you.  Also I would like to see
+anything produced using this also be free, but again, I can't control you or
+anyone's drive for money.  So this document is placed into the public domain
+by the SMSC on 06/21/97.
+
+Oh, and the SMSC can not be held responcible for anything that is done with
+this document.  Although we recommend not spending free CPU cycles of a
+computer controling an experimental fission reactor playing around with SMS
+code.
+
+
+Thanks for reading!  Now go code something to amaze the world.
+

@@ -1,0 +1,48 @@
+line ::= number statement CR | statement CR ;
+
+statement ::= PRINT exprlist
+	|	IF expression relop expression THEN statement
+	|	GOTO expression
+	|	INPUT varlist
+	|	LET var EQ expression
+	|	GOSUB expression
+	|	RETURN
+	|	CLEAR
+	|	LIST
+	|	RUN
+	|	END
+	;
+
+exprlist ::= (string|expression) (COMMA (string|expression)* ) ;
+
+varlist ::= var (COMMA var)* ;
+
+expression ::= term ((PLUS|MINUS) term)* ;
+
+term ::= factor ((MULT|DIV) factor)* ;
+
+factor ::= var | number | (expression) ;
+
+relop ::= EQ | NOTEQ | LT | GT | LTEQ | GTEQ ;
+
+var ::= VAR ;
+
+number ::= INTEGER_LITERAL ;
+
+COMMA      ::= ',' ;
+
+PLUS       ::= '+' ;
+MINUS      ::= '-' ;
+MULT       ::= '*' ;
+DIV        ::= '/' ;
+
+EQ         ::= '=' ;
+NOTEQ      ::= "<>" ;
+LT         ::= '<' ;
+GT         ::= '>' ;
+LTEQ       ::= "<=" ;
+GTEQ       ::= ">=" ;
+
+VAR					::= `identifier`;
+INTEGER_LITERAL		::= `integer` ;
+STRING_LITERAL		::= `stringdef` ;

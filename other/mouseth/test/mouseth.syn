@@ -1,0 +1,84 @@
+; TextPad syntax definitions for Mouseth
+
+C=1
+
+[Syntax]
+Namespace1 = 6
+IgnoreCase = No
+InitKeyWordChars = A-Za-z_
+KeyWordChars = A-Za-z0-9_
+BracketChars = {[()]};
+OperatorChars = -+*/<>!%^&|=
+PreprocStart = #
+SyntaxStart =
+SyntaxEnd =
+HexPrefix =
+CommentStart =
+CommentEnd =
+CommentStartAlt =
+CommentEndAlt =
+SingleComment = ~
+SingleCommentCol = 
+SingleCommentAlt =
+SingleCommentColAlt =
+SingleCommentEsc =
+StringsSpanLines = No
+StringStart = "
+StringEnd = "
+StringAlt =
+StringEsc = \
+CharStart = '
+CharEnd = '
+CharEsc = \
+
+[Keywords 1]
+EXITCODE
+MEMSIZE
+PC
+CURRENTCODE
+APC
+AUXCODE
+CODESP
+CODESP_BASE
+DATASP
+DATASP_BASE
+IO
+IO1
+IO2
+IO3
+IO4
+IO5
+IO6
+IO7
+SYS
+SYS1
+SYS2
+SYS3
+SYS4
+SYS5
+SYS6
+SYS7
+
+[Keywords 2]
+invalid
+nop
+end
+call
+ret
+brz
+ld
+sto
+add
+sub
+shl
+shr
+or
+and
+not
+eq
+lt
+gt
+sys
+
+[Keywords 3]
+&

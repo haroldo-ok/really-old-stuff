@@ -1,0 +1,55 @@
+				;
+				;	Disassembled by:
+				;		DASMx object code disassembler
+				;		(c) Copyright 1996-2003   Conquest Consultants
+				;		Version 1.40 (Oct 18 2003)
+				;
+				;	File:		deleteme.bin
+				;
+				;	Size:		33 bytes
+				;	Checksum:	112B
+				;	CRC-32:		0EB287E0
+				;
+				;	Date:		Sun Mar 16 23:57:30 2008
+				;
+				;	CPU:		Zilog Z80 (Z80 family)
+				;
+				;
+				;
+					org	00200H
+				;
+0200 : C3 1A 02		"   "		jp	L021A
+				;
+0203 : 00		" "		nop
+0204 : E9		" "		jp	(hl)						;INFO: index jump
+0205				L0205:
+0205 : C3 00 01		"   "		jp	L0100
+				;
+0208 : FD E5		"  "		push	iy
+020A : FD 21 00 00	" !  "		ld	iy,00000H
+020E : FD 39		" 9"		add	iy,sp
+0210 : 21 FE FF		"!  "		ld	hl,0FFFEH
+0213 : 39		"9"		add	hl,sp
+0214 : F9		" "		ld	sp,hl
+0215 : FD F9		"  "		ld	sp,iy
+0217 : FD E1		"  "		pop	iy
+0219 : C9		" "		ret
+				;
+021A				L021A:
+021A : CD 05 02		"   "		call	L0205
+021D : C3 1A 02		"   "		jp	L021A
+0220 : C9		" "		ret
+
+;--------------------------------------------------------------
+Symbol table
+============
+
+Value		Type	Name
+-----		----	----
+0100		Code	L0100
+0205		Code	L0205
+021A		Code	L021A
+
+Number of symbols:			3
+
+;--------------------------------------------------------------

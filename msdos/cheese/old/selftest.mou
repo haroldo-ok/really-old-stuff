@@ -1,0 +1,7 @@
+"This is a test"
+0 A: ~ A = 0
+( A. 10 < ^ ~ while(A < 10)
+	A. ! ~ Output A
+	A. 1 + A: ~ A = A + 1
+)
+$

@@ -1,0 +1,21 @@
+"Preparing to play some music..."!
+0m
+
+"And now..."!
+
+0 i
+"Displaying an image."!
+
+1 i 
+1 m
+"Displaying another image and changing music."!
+
+"Calling a subroutine"!
+2c
+"Calling it again"!
+2c
+
+
+"Okay, Done"!
+
+1[1]$

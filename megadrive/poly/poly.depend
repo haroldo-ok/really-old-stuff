@@ -1,0 +1,24 @@
+# depslib dependency file v1.0
+1182202428 c:\utils\gendev\project\poly\rsc_s.s
+
+1171601538 c:\utils\gendev\project\poly\trances.c
+	"genesis.h"
+
+1182202428 c:\utils\gendev\project\poly\z80.s
+
+1187324474 c:\utils\gendev\project\poly\main.c
+	"genesis.h"
+	"tranceS.h"
+	"vangelisS.h"
+	"z80.h"
+	"rsc_s.h"
+
+1171601538 c:\utils\gendev\project\poly\trances.h
+
+1171601698 c:\utils\gendev\project\poly\vangeliss.h
+
+1182205380 c:\utils\gendev\project\poly\z80.h
+
+1182205360 c:\utils\gendev\project\poly\rsc_s.h
+	"z80.h"
+
